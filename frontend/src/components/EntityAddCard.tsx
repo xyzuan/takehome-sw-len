@@ -14,7 +14,7 @@ export function EntityAddCard() {
     setActiveOverlay("none");
   };
 
-  const showPlaceholder = pickMode && !draftLatLng;
+  const showPlaceholder = pickMode;
 
   return (
     <div className="w-full max-h-[60vh] overflow-y-auto bg-background/95 backdrop-blur border rounded-xl shadow-md p-4">
@@ -36,7 +36,9 @@ export function EntityAddCard() {
       {showPlaceholder ? (
         <div className="flex items-center gap-3 py-8 justify-center">
           <MapPin className="w-5 h-5 text-primary animate-pulse flex-shrink-0" />
-          <span className="text-sm text-muted-foreground">Click the map to place the entity</span>
+          <span className="text-sm text-muted-foreground">
+            {draftLatLng ? "Click the map to re-pick location" : "Click the map to place the entity"}
+          </span>
         </div>
       ) : (
         <EntityForm onDone={handleBack} />
