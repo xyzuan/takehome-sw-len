@@ -72,6 +72,7 @@ export function EntityForm({ entity, onDone }: EntityFormProps) {
     try {
       if (isEdit && entity) {
         await updateMut.mutateAsync({ id: entity.id, input: values });
+        useUIStore.getState().setPendingFlyTo({ lat: values.lat, lng: values.lng });
       } else {
         await createMut.mutateAsync(values);
       }

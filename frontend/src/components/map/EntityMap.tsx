@@ -247,7 +247,7 @@ function MapFocusHandler() {
 
     // EDIT CANCEL: activeOverlay changed from edit to none/detail, repicked but cancelled
     // → fly back to original position, re-focus with rotation
-    if (prevOverlayRef.current === "edit" && activeOverlay !== "edit" && now !== null && repickedRef.current) {
+    if (prevOverlayRef.current === "edit" && activeOverlay !== "edit" && now !== null && repickedRef.current && !pendingFlyTo) {
       const origPos = focusedEntityPosRef.current;
       repickedRef.current = false;
       if (origPos) {
