@@ -97,21 +97,63 @@ metadata without schema churn.
 
 A GiST index on the `location` column supports spatial queries (stretch).
 
-## 5. REST API
+## 5. REST API & Contract
 
-All endpoints are prefixed with `/api`. Responses are JSON. The `location`
-column is flattened to `lat` and `lng` in request and response bodies for
-frontend friendliness.
+All endpoints are prefixed with `/api`. All responses are JSON and use a
+single unified envelope (see below). The `location` column is flattened to
+`lat` and `lng` in request and response bodies for frontend friendliness.
 
-| Method | Path                 | Purpose | Success |
-|--------|----------------------|---------|---------|
-| `GET`    | `/api/entities`      | list all; optional `?type=` and `?status=` filters | 200 + array |
-| `GET`    | `/api/entities/:id`  | get one (detail view) | 200 + object |
-| `POST`   | `/api/entities`      | create | 201 + object |
-| `PUT`    | `/api/entities/:id`  | full replace | 200 + object |
-| `DELETE` | `/api/entities/:id`  | delete | 204 |
+### Endpoints
 
-### JSON shape (request and response)
+| Method | Path                 | Purpose | Success response |
+|--------|----------------------|---------|------------------|
+| `GET`    | `/api/entities`      | list all; optional `?type=` and `?status=` filters | 200 + `data: Entity[]` |
+| `GET`    | `/api/entities/:id`  | get one (detail view) | 200 + `data: Entity` |
+| `POST`   | `/api/entities`      | create | 201 + `data: Entity` |
+| `PUT`    | `/api/entities/:id`  | full replace | 200 + `data: Entity` |
+| `DELETE` | `/api/entities/:id`  | delete | 204 (no body) |
+
+### Response envelope (meta + data + errors)
+
+Every response (except `204 No Content`) uses the same envelope. `meta`
+always carries success status, HTTP code, and a human-readable message. `data`
+holds the payload on success (single object or array). `errors` holds
+field-level messages and is present only when `success` is `false` and the
+error is field-scoped (validation, conflict).
+
+**Success:**
+```json
+{
+  "meta": { "success": true, "code": 200, "message": "OK" },
+  "data": { "id": "550e8400-...", "device_id": "VAN-03-NORTH", "name": "Delivery Van 03", "type": "vehicle", "status": "active", "description": "Refrigerated van, north route", "lat": -6.2088, "lng": 106.8456, "attributes": { "plate": "B 1234 X" }, "created_at": "2026-09-18T12:00:00Z", "updated_at": "2026-09-18T12:30:00Z" }
+}
+```
+
+For list endpoints `data` is an array (`Entity[]`); for single-resource
+endpoints `data` is one object.
+
+**Error:**
+```json
+{
+  "meta": { "success": false, "code": 422, "message": "validation failed" },
+  "data": null,
+  "errors": {
+    "name": "name is required",
+    "lat": "lat must be between -90 and 90"
+  }
+}
+```
+
+Non-field errors (not found, malformed JSON, server fault) return the same
+envelope with `data: null` and omit `errors`:
+```json
+{
+  "meta": { "success": false, "code": 404, "message": "entity not found" },
+  "data": null
+}
+```
+
+### Entity JSON shape (the `data` payload)
 
 ```json
 {
@@ -129,35 +171,92 @@ frontend friendliness.
 }
 ```
 
-Create/update requests omit `id`, `created_at`, and `updated_at` (server-managed).
+Create/update requests omit `id`, `created_at`, and `updated_at`
+(server-managed).
 
-### Error responses
+### Error codes
 
-Validation failures return `422 Unprocessable Entity` with field-level errors:
+| HTTP | `code` | `message`              | When                          | Has `errors`? |
+|------|--------|------------------------|-------------------------------|---------------|
+| 200  | 200    | `OK`                   | GET / PUT success             | no |
+| 201  | 201    | `Created`              | POST success                  | no |
+| 204  | 204    | `No Content`           | DELETE success (no body)      | n/a (no body) |
+| 400  | 400    | `Bad Request`          | malformed JSON                | no |
+| 404  | 404    | `entity not found`     | `:id` not found               | no |
+| 409  | 409    | `conflict`             | duplicate `device_id`         | yes — `{ "device_id": "..." }` |
+| 422  | 422    | `validation failed`    | invalid input                 | yes — field messages |
+| 500  | 500    | `internal server error`| server fault                  | no |
 
-```json
-{
-  "error": "validation failed",
-  "fields": {
-    "name": "name is required",
-    "lat": "lat must be between -90 and 90"
+### Frontend TypeScript contract
+
+The frontend mirrors this envelope exactly. These types live in
+`frontend/src/lib/api/types.ts` and are the single source of truth consumed by
+the TanStack Query hooks and components.
+
+```typescript
+// Domain enums
+export type EntityType = "vehicle" | "iot" | "facility" | "other";
+export type EntityStatus = "active" | "inactive" | "maintenance";
+
+// Entity (response data payload)
+export interface Entity {
+  id: string;
+  device_id: string;
+  name: string;
+  type: EntityType;
+  status: EntityStatus;
+  description: string | null;
+  lat: number;
+  lng: number;
+  attributes: Record<string, unknown> | null;
+  created_at: string; // ISO 8601
+  updated_at: string; // ISO 8601
+}
+
+// Create/update request body (no id/created_at/updated_at)
+export interface EntityInput {
+  device_id: string;
+  name: string;
+  type: EntityType;
+  status: EntityStatus;
+  description?: string;
+  lat: number;
+  lng: number;
+  attributes?: Record<string, unknown>;
+}
+
+// Unified response envelope
+export interface ResponseMeta {
+  success: boolean;
+  code: number;    // HTTP status, mirrors the HTTP status line
+  message: string; // human-readable summary
+}
+
+export interface ApiResponse<T> {
+  meta: ResponseMeta;
+  data: T | null;
+  errors?: Record<string, string>; // present only on field-scoped failures
+}
+
+// Convenience aliases for each endpoint
+export type EntityListResponse = ApiResponse<Entity[]>;
+export type EntityResponse = ApiResponse<Entity>;
+export type EmptyResponse = ApiResponse<null>;
+```
+
+The API client (`frontend/src/lib/api/client.ts`) parses `meta.success`:
+on `true` it returns `data`; on `false` it throws a typed `ApiError` carrying
+`meta` and `errors`, which TanStack Query mutation hooks surface as inline
+form errors (for 422/409) or toasts (for 404/500).
+
+```typescript
+export class ApiError extends Error {
+  constructor(public meta: ResponseMeta, public errors?: Record<string, string>) {
+    super(meta.message);
+    this.name = "ApiError";
   }
 }
 ```
-
-Not found returns `404`. Malformed JSON returns `400`. A duplicate
-`device_id` returns `409 Conflict` with a field-level error:
-
-```json
-{
-  "error": "conflict",
-  "fields": {
-    "device_id": "device_id already exists"
-  }
-}
-```
-
-Server errors return `500` with a generic message.
 
 ### Stretch (only if time remains)
 
