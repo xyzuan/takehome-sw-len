@@ -9,6 +9,7 @@ import (
 	"geoapp/internal/handlers"
 	"geoapp/internal/services"
 	"geoapp/internal/validation"
+	"geoapp/seed"
 
 	"github.com/gin-gonic/gin"
 )
@@ -23,6 +24,7 @@ func main() {
 	if err := db.Migrate(gdb); err != nil {
 		log.Fatal(err)
 	}
+	seed.IfEmpty(gdb)
 
 	validation.RegisterWithGin()
 
