@@ -200,21 +200,53 @@ function MapFocusHandler() {
 function MapPaddingHandler() {
   const { map, isLoaded } = useMap();
   const activeOverlay = useUIStore((s) => s.activeOverlay);
+  const paddingRafRef = useRef<number | null>(null);
 
   useEffect(() => {
     if (!map || !isLoaded) return;
-    const needsPadding = activeOverlay === "edit" || activeOverlay === "add";
-    map.easeTo(
-      {
-        padding: {
-          top: 0,
-          bottom: needsPadding ? 280 : 0,
-          left: 0,
-          right: 0,
-        },
-      },
-      { duration: 400, easing: (t: number) => t * (2 - t) }, // ease-out
-    );
+
+    const targetBottom = activeOverlay === "edit" || activeOverlay === "add" ? 280 : 0;
+    const startBottom = map.getPadding().bottom || 0;
+    if (startBottom === targetBottom) return;
+
+    if (paddingRafRef.current !== null) {
+      cancelAnimationFrame(paddingRafRef.current);
+    }
+
+    const startTime = performance.now();
+    const duration = 400;
+    const easeOut = (t: number) => t * (2 - t);
+
+    const animate = (now: number) => {
+      if (!map) {
+        paddingRafRef.current = null;
+        return;
+      }
+      const elapsed = now - startTime;
+      const t = Math.min(1, elapsed / duration);
+      const eased = easeOut(t);
+      const current = startBottom + (targetBottom - startBottom) * eased;
+      map.setPadding({
+        top: 0,
+        bottom: current,
+        left: 0,
+        right: 0,
+      });
+      if (t < 1) {
+        paddingRafRef.current = requestAnimationFrame(animate);
+      } else {
+        paddingRafRef.current = null;
+      }
+    };
+
+    paddingRafRef.current = requestAnimationFrame(animate);
+
+    return () => {
+      if (paddingRafRef.current !== null) {
+        cancelAnimationFrame(paddingRafRef.current);
+        paddingRafRef.current = null;
+      }
+    };
   }, [map, isLoaded, activeOverlay]);
 
   return null;
