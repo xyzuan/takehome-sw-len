@@ -3,11 +3,11 @@ import { MapMarker, MarkerContent } from "@/components/ui/map";
 import { Car, Cpu, Building, Circle } from "lucide-react";
 import type { Entity } from "@/interface/entity.interface";
 
-const typeStyles: Record<string, { icon: typeof Car; color: string }> = {
-  vehicle: { icon: Car, color: "text-blue-500" },
-  iot: { icon: Cpu, color: "text-purple-500" },
-  facility: { icon: Building, color: "text-green-500" },
-  other: { icon: Circle, color: "text-gray-500" },
+const typeStyles: Record<string, { icon: typeof Car; bg: string; text: string }> = {
+  vehicle: { icon: Car, bg: "bg-blue-500", text: "text-white" },
+  iot: { icon: Cpu, bg: "bg-purple-500", text: "text-white" },
+  facility: { icon: Building, bg: "bg-green-500", text: "text-white" },
+  other: { icon: Circle, bg: "bg-gray-500", text: "text-white" },
 };
 
 const statusDot: Record<string, string> = {
@@ -68,9 +68,9 @@ export function MarkerLayer({ entities, onSelect }: MarkerLayerProps) {
                       }
                     : undefined
                 }
-                className="relative p-1 rounded-full bg-background shadow-md cursor-pointer hover:scale-110 transition-transform"
+                className={`relative p-1 rounded-full ${style.bg} shadow-md cursor-pointer hover:scale-110 transition-transform`}
               >
-                <Icon className={`w-5 h-5 ${style.color}`} />
+                <Icon className={`w-5 h-5 ${style.text}`} />
                 <span className={`absolute top-0 right-0 w-2 h-2 rounded-full border border-background ${statusDot[entity.status] ?? "bg-gray-400"}`} />
               </div>
             </MarkerContent>
