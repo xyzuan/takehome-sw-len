@@ -27,9 +27,9 @@ export function InAreaCards() {
   if (!filtered || filtered.length === 0) return null;
 
   return (
-    <div className="flex gap-3 overflow-x-auto pb-1 scroll-smooth snap-x" style={{ scrollbarWidth: "thin" }}>
+    <div className="w-full min-w-0 flex gap-3 overflow-x-auto overscroll-x-contain pb-1 scroll-smooth snap-x" style={{ scrollbarWidth: "thin" }}>
       {filtered.map((entity) => (
-        <div key={entity.id} className="snap-start">
+        <div key={entity.id} className="snap-start flex-shrink-0">
           <EntityCard entity={entity} onClick={handleCardClick} />
         </div>
       ))}

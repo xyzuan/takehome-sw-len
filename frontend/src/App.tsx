@@ -19,7 +19,7 @@ export default function App() {
         <EntityMap />
 
         {/* Floating bottom-center: in-area cards + controls */}
-        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2 max-w-[90vw]">
+        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10 flex flex-col items-stretch gap-2 max-w-[90vw] w-fit">
           <InAreaCards />
           <BottomNavigation />
         </div>
