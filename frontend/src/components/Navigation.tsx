@@ -10,7 +10,7 @@ import {
 import { useUIStore } from "@/store/ui";
 import { Plus } from "lucide-react";
 
-export function TopBar() {
+export function Navigation() {
   const setPickMode = useUIStore((s) => s.setPickMode);
   const pickMode = useUIStore((s) => s.pickMode);
   const search = useUIStore((s) => s.search);

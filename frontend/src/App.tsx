@@ -2,7 +2,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "@/libs/query";
 import { Toaster } from "sonner";
 import { EntityMap } from "@/components/map/EntityMap";
-import { TopBar } from "@/components/TopBar";
+import { Navigation } from "@/components/Navigation";
 import { EntityDialog } from "@/components/EntityDialog";
 import { EntityDetail } from "@/components/EntityDetail";
 import { DeleteConfirm } from "@/components/DeleteConfirm";
@@ -19,7 +19,7 @@ export default function App() {
 
         {/* Floating bottom-center controls */}
         <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10">
-          <TopBar />
+          <Navigation />
         </div>
 
         {/* Pick-mode banner */}
