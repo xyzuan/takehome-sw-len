@@ -25,7 +25,7 @@ export function BottomNavigation() {
   };
 
   return (
-    <div className="flex items-center gap-3 bg-background/90 backdrop-blur border rounded-lg shadow-md px-4 py-2">
+    <div className="flex items-center gap-3 bg-background/90 backdrop-blur border rounded-lg shadow-md px-4 py-2 w-full">
       <Input
         placeholder="Search by name..."
         value={search}
