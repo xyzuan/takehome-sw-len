@@ -17,7 +17,9 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	_ = gdb // used by handlers in later tasks
+	if err := db.Migrate(gdb); err != nil {
+		log.Fatal(err)
+	}
 
 	r := gin.Default()
 	r.GET("/api/health", func(c *gin.Context) {
