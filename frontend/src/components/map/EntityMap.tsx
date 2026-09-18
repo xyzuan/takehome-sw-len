@@ -71,16 +71,12 @@ function MapFocusHandler() {
 
   const startRotation = (session: number) => {
     if (!map) return;
-    let lastUpdate = 0;
-    const tick = (now: number) => {
+    const tick = () => {
       if (focusSessionRef.current !== session || !map) {
         rafRef.current = null;
         return;
       }
-      if (now - lastUpdate >= 50) {
-        map.setBearing(map.getBearing() + 0.3);
-        lastUpdate = now;
-      }
+      map.setBearing(map.getBearing() + 0.1);
       rafRef.current = requestAnimationFrame(tick);
     };
     rafRef.current = requestAnimationFrame(tick);
