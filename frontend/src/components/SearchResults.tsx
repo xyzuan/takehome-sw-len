@@ -3,6 +3,7 @@ import { ArrowLeft, Search, Car, Cpu, Building, Circle } from "lucide-react";
 import { useSearchEntities } from "@/features/entities/hooks";
 import { useUIStore } from "@/store/ui";
 import { EntityCardSkeleton } from "@/components/EntityCardSkeleton";
+import { formatLabel } from "@/consts/labels";
 import type { Entity } from "@/interface/entity.interface";
 
 const typeStyles: Record<string, { icon: typeof Car; bg: string; text: string }> = {
@@ -108,14 +109,14 @@ export function SearchResults() {
             </div>
             <div className="flex items-center gap-1.5 flex-shrink-0">
               <span className="text-xs px-2 py-0.5 rounded-full bg-muted text-muted-foreground">
-                {entity.type}
+                {formatLabel(entity.type)}
               </span>
               <span className={`text-xs px-2 py-0.5 rounded-full ${
                 entity.status === "active" ? "bg-green-100 text-green-700" :
                 entity.status === "inactive" ? "bg-gray-100 text-gray-500" :
                 "bg-amber-100 text-amber-700"
               }`}>
-                {entity.status}
+                {formatLabel(entity.status)}
               </span>
             </div>
           </button>

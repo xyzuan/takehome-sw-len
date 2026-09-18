@@ -1,5 +1,6 @@
 import { Car, Cpu, Building, Circle } from "lucide-react";
 import type { Entity } from "@/interface/entity.interface";
+import { formatLabel } from "@/consts/labels";
 
 const typeStyles: Record<string, { icon: typeof Car; bg: string; text: string }> = {
   vehicle: { icon: Car, bg: "bg-blue-500", text: "text-white" },
@@ -39,10 +40,10 @@ export function EntityCard({ entity, onClick }: EntityCardProps) {
       </div>
       <div className="flex items-center gap-1.5 mt-2">
         <span className="text-xs px-2 py-0.5 rounded-full bg-muted text-muted-foreground">
-          {entity.type}
+          {formatLabel(entity.type)}
         </span>
         <span className={`text-xs px-2 py-0.5 rounded-full ${statusColors[entity.status] ?? ""}`}>
-          {entity.status}
+          {formatLabel(entity.status)}
         </span>
       </div>
     </button>
