@@ -20,7 +20,7 @@ function ExpandableButton({
   icon,
   label,
   onClick,
-  variant = "ghost",
+  variant = "default",
   active,
 }: {
   icon: React.ReactNode;
@@ -80,7 +80,7 @@ function FilterButton() {
             type="button"
             onMouseEnter={() => setHovered(true)}
             onMouseLeave={() => setHovered(false)}
-            className={`h-8 inline-flex items-center justify-center rounded-lg text-sm font-medium transition-all duration-300 ease-out overflow-hidden whitespace-nowrap bg-muted hover:bg-muted/80 ${isActive || open ? "ring-2 ring-ring/30" : ""}`}
+            className={`h-8 inline-flex items-center justify-center rounded-lg text-sm font-medium transition-all duration-300 ease-out overflow-hidden whitespace-nowrap bg-primary text-primary-foreground hover:bg-primary/90 ${isActive || open ? "ring-2 ring-ring/30" : ""}`}
             style={{
               width: hovered ? "auto" : "2rem",
               minWidth: "2rem",
@@ -159,12 +159,12 @@ export function BottomNavigation() {
   }, [darkMode]);
 
   return (
-    <div className="flex items-center gap-2 px-3 py-2 w-full">
+    <div className="flex items-center gap-2 w-full">
       <Input
         placeholder="Search by name..."
         value={search}
         onChange={(e) => setSearch(e.target.value)}
-        className="h-8 flex-1 min-w-0 border-0 shadow-none focus-visible:ring-0 bg-muted/50"
+        className="h-8 flex-1 min-w-0 bg-muted"
       />
 
       <FilterButton />
@@ -173,6 +173,7 @@ export function BottomNavigation() {
         icon={darkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
         label={darkMode ? "Light" : "Dark"}
         onClick={toggleDarkMode}
+        variant="default"
       />
 
       <ExpandableButton
