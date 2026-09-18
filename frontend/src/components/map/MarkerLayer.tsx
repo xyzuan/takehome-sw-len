@@ -1,5 +1,5 @@
 import { useRef } from "react";
-import { MapMarker, MarkerContent } from "@/components/ui/map";
+import { MapMarker, MarkerContent, MarkerTooltip } from "@/components/ui/map";
 import { Car, Cpu, Building, Circle } from "lucide-react";
 import type { Entity } from "@/interface/entity.interface";
 
@@ -71,9 +71,12 @@ export function MarkerLayer({ entities, onSelect }: MarkerLayerProps) {
                 className={`relative p-1 rounded-full ${style.bg} shadow-md cursor-pointer hover:scale-110 transition-transform`}
               >
                 <Icon className={`w-5 h-5 ${style.text}`} />
-                <span className={`absolute top-0 right-0 w-2 h-2 rounded-full border border-background ${statusDot[entity.status] ?? "bg-gray-400"}`} />
+                <span className={`absolute -top-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-background ${statusDot[entity.status] ?? "bg-gray-400"}`} />
               </div>
             </MarkerContent>
+            <MarkerTooltip>
+              <span className="font-medium">{entity.name}</span>
+            </MarkerTooltip>
           </MapMarker>
         );
       })}
