@@ -213,6 +213,7 @@ export function EntityMap({ children }: { children?: ReactNode }) {
   const handlePick = useCallback(
     (lat: number, lng: number) => {
       setDraftLatLng({ lat, lng });
+      useUIStore.getState().setPendingFlyTo({ lat, lng });
       useUIStore.getState().setPickMode(false);
       if (useUIStore.getState().activeOverlay !== "edit") {
         setActiveOverlay("add");
