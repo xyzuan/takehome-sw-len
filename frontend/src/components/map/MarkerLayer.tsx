@@ -1,3 +1,4 @@
+import { useRef } from "react";
 import { MapMarker, MarkerContent } from "@/components/ui/map";
 import { Car, Cpu, Building, Circle } from "lucide-react";
 import type { Entity } from "@/interface/entity.interface";
@@ -21,11 +22,24 @@ interface MarkerLayerProps {
 }
 
 export function MarkerLayer({ entities, onSelect }: MarkerLayerProps) {
+  const knownIdsRef = useRef<Set<string>>(new Set());
+  const currentIds = new Set(entities.map((e) => e.id));
+  const newIds = new Set<string>();
+
+  for (const id of currentIds) {
+    if (!knownIdsRef.current.has(id)) {
+      newIds.add(id);
+    }
+  }
+
+  knownIdsRef.current = currentIds;
+
   return (
     <>
       {entities.map((entity) => {
         const style = typeStyles[entity.type] ?? typeStyles.other;
         const Icon = style.icon;
+        const isNew = newIds.has(entity.id);
         return (
           <MapMarker
             key={entity.id}
@@ -34,7 +48,7 @@ export function MarkerLayer({ entities, onSelect }: MarkerLayerProps) {
             onClick={() => onSelect(entity)}
           >
             <MarkerContent>
-              <div className={`p-1 rounded-full bg-background shadow-md cursor-pointer hover:scale-110 transition-transform marker-fade-in ${statusRing[entity.status] ?? ""}`}>
+              <div className={`p-1 rounded-full bg-background shadow-md cursor-pointer hover:scale-110 transition-transform ${isNew ? "marker-fade-in" : ""} ${statusRing[entity.status] ?? ""}`}>
                 <Icon className={`w-5 h-5 ${style.color}`} />
               </div>
             </MarkerContent>
