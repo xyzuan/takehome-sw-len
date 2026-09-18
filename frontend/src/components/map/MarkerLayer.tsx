@@ -48,7 +48,24 @@ export function MarkerLayer({ entities, onSelect }: MarkerLayerProps) {
             onClick={() => onSelect(entity)}
           >
             <MarkerContent>
-              <div className={`p-1 rounded-full bg-background shadow-md cursor-pointer hover:scale-110 transition-transform ${isNew ? "marker-fade-in" : ""} ${statusRing[entity.status] ?? ""}`}>
+              <div
+                ref={
+                  isNew
+                    ? (el) => {
+                      if (el) {
+                        el.animate(
+                          [
+                            { opacity: 0, transform: "scale(0.5)" },
+                            { opacity: 1, transform: "scale(1)" },
+                          ],
+                          { duration: 300, easing: "ease-out", fill: "forwards" },
+                        );
+                      }
+                    }
+                    : undefined
+                }
+                className={`p-1 rounded-full bg-background shadow-md cursor-pointer hover:scale-110 transition-transform ${statusRing[entity.status] ?? ""}`}
+              >
                 <Icon className={`w-5 h-5 ${style.color}`} />
               </div>
             </MarkerContent>
