@@ -206,6 +206,7 @@ export function EntityMap({ children }: { children?: ReactNode }) {
   const darkMode = useUIStore((s) => s.darkMode);
   const { data: entities } = useMapEntities(bbox, typeFilter, statusFilter);
   const pickMode = useUIStore((s) => s.pickMode);
+  const draftLatLng = useUIStore((s) => s.draftLatLng);
   const setDraftLatLng = useUIStore((s) => s.setDraftLatLng);
   const setActiveOverlay = useUIStore((s) => s.setActiveOverlay);
 
@@ -222,11 +223,23 @@ export function EntityMap({ children }: { children?: ReactNode }) {
 
   const filtered = useMemo(() => {
     if (!entities) return [];
-    if (selectedEntityId) return entities.filter((e) => e.id === selectedEntityId);
-    if (!search) return entities;
-    const q = search.toLowerCase();
-    return entities.filter((e) => e.name.toLowerCase().includes(q));
-  }, [entities, search, selectedEntityId]);
+    let result = entities;
+    if (selectedEntityId) {
+      result = entities.filter((e) => e.id === selectedEntityId);
+    } else if (search) {
+      const q = search.toLowerCase();
+      result = entities.filter((e) => e.name.toLowerCase().includes(q));
+    }
+    // Override marker position with draft coords during edit re-pick
+    if (draftLatLng && selectedEntityId) {
+      result = result.map((e) =>
+        e.id === selectedEntityId
+          ? { ...e, lat: draftLatLng.lat, lng: draftLatLng.lng }
+          : e,
+      );
+    }
+    return result;
+  }, [entities, search, selectedEntityId, draftLatLng]);
 
   return (
     <Map center={[106.8456, -6.2088]} zoom={11} theme={darkMode ? "dark" : "light"} className="w-full h-full">
