@@ -62,7 +62,7 @@ export function EntityMap({ children }: { children?: ReactNode }) {
   }, [entities, search]);
 
   return (
-    <Map center={[106.8456, -6.2088]} zoom={11} className="w-full h-full">
+    <Map center={[106.8456, -6.2088]} zoom={11} theme="light" className="w-full h-full">
       <BboxTracker onBbox={setBbox} />
       <MarkerLayer
         entities={filtered}

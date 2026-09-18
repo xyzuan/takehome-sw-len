@@ -17,14 +17,14 @@ export default function App() {
       <div className="w-screen h-screen relative overflow-hidden">
         <EntityMap />
 
-        {/* Floating top bar */}
-        <div className="absolute top-4 left-4 right-4 z-10">
+        {/* Floating bottom-center controls */}
+        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10">
           <TopBar />
         </div>
 
         {/* Pick-mode banner */}
         {useUIStore((s) => s.pickMode) && (
-          <div className="absolute top-20 left-1/2 -translate-x-1/2 z-10 bg-background/90 backdrop-blur px-4 py-2 rounded-lg shadow-md border">
+          <div className="absolute bottom-20 left-1/2 -translate-x-1/2 z-10 bg-background/90 backdrop-blur px-4 py-2 rounded-lg shadow-md border">
             <span className="text-sm font-medium">Click the map to place the entity</span>
           </div>
         )}
