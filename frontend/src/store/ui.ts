@@ -1,6 +1,13 @@
 import { create } from "zustand";
 
-type Overlay = "none" | "add" | "edit" | "detail" | "delete";
+type Overlay = "none" | "add" | "edit" | "delete";
+
+interface MapView {
+  center: [number, number];
+  zoom: number;
+  pitch: number;
+  bearing: number;
+}
 
 interface UIState {
   pickMode: boolean;
@@ -12,6 +19,7 @@ interface UIState {
   search: string;
   bbox: string | null;
   pendingFlyTo: { lat: number; lng: number } | null;
+  savedMapView: MapView | null;
 
   setPickMode: (v: boolean) => void;
   setSelectedEntityId: (id: string | null) => void;
@@ -22,6 +30,7 @@ interface UIState {
   setSearch: (v: string) => void;
   setBbox: (bbox: string | null) => void;
   setPendingFlyTo: (coords: { lat: number; lng: number } | null) => void;
+  setSavedMapView: (v: MapView | null) => void;
   reset: () => void;
 }
 
@@ -35,6 +44,7 @@ export const useUIStore = create<UIState>((set) => ({
   search: "",
   bbox: null,
   pendingFlyTo: null,
+  savedMapView: null,
 
   setPickMode: (v) => set({ pickMode: v }),
   setSelectedEntityId: (id) => set({ selectedEntityId: id }),
@@ -45,6 +55,7 @@ export const useUIStore = create<UIState>((set) => ({
   setSearch: (v) => set({ search: v }),
   setBbox: (bbox) => set({ bbox }),
   setPendingFlyTo: (coords) => set({ pendingFlyTo: coords }),
+  setSavedMapView: (v) => set({ savedMapView: v }),
   reset: () =>
     set({
       pickMode: false,
@@ -56,5 +67,6 @@ export const useUIStore = create<UIState>((set) => ({
       search: "",
       bbox: null,
       pendingFlyTo: null,
+      savedMapView: null,
     }),
 }));

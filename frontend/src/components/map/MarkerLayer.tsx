@@ -1,4 +1,4 @@
-import { MapMarker, MarkerContent, MarkerPopup } from "@/components/ui/map";
+import { MapMarker, MarkerContent } from "@/components/ui/map";
 import { Car, Cpu, Building, Circle } from "lucide-react";
 import type { Entity } from "@/interface/entity.interface";
 
@@ -17,7 +17,7 @@ const statusRing: Record<string, string> = {
 
 interface MarkerLayerProps {
   entities: Entity[];
-  onSelect: (entity: Entity, action: "detail" | "edit" | "delete") => void;
+  onSelect: (entity: Entity) => void;
 }
 
 export function MarkerLayer({ entities, onSelect }: MarkerLayerProps) {
@@ -27,43 +27,17 @@ export function MarkerLayer({ entities, onSelect }: MarkerLayerProps) {
         const style = typeStyles[entity.type] ?? typeStyles.other;
         const Icon = style.icon;
         return (
-          <MapMarker key={entity.id} longitude={entity.lng} latitude={entity.lat}>
+          <MapMarker
+            key={entity.id}
+            longitude={entity.lng}
+            latitude={entity.lat}
+            onClick={() => onSelect(entity)}
+          >
             <MarkerContent>
-              <div className={`p-1 rounded-full bg-background shadow-md ${statusRing[entity.status] ?? ""}`}>
+              <div className={`p-1 rounded-full bg-background shadow-md cursor-pointer hover:scale-110 transition-transform ${statusRing[entity.status] ?? ""}`}>
                 <Icon className={`w-5 h-5 ${style.color}`} />
               </div>
             </MarkerContent>
-            <MarkerPopup closeButton>
-              <div className="space-y-1">
-                <div className="font-medium">{entity.name}</div>
-                <div className="text-xs text-muted-foreground">
-                  {entity.type} · {entity.status}
-                </div>
-                {entity.description && (
-                  <p className="text-xs">{entity.description}</p>
-                )}
-                <div className="flex gap-2 pt-2">
-                  <button
-                    className="text-xs text-blue-500 hover:underline"
-                    onClick={() => onSelect(entity, "detail")}
-                  >
-                    View detail
-                  </button>
-                  <button
-                    className="text-xs text-blue-500 hover:underline"
-                    onClick={() => onSelect(entity, "edit")}
-                  >
-                    Edit
-                  </button>
-                  <button
-                    className="text-xs text-destructive hover:underline"
-                    onClick={() => onSelect(entity, "delete")}
-                  >
-                    Delete
-                  </button>
-                </div>
-              </div>
-            </MarkerPopup>
           </MapMarker>
         );
       })}
