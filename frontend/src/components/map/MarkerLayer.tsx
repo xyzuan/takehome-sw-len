@@ -10,10 +10,10 @@ const typeStyles: Record<string, { icon: typeof Car; color: string }> = {
   other: { icon: Circle, color: "text-gray-500" },
 };
 
-const statusRing: Record<string, string> = {
-  active: "ring-2 ring-blue-400",
-  inactive: "opacity-50",
-  maintenance: "ring-2 ring-amber-400",
+const statusDot: Record<string, string> = {
+  active: "bg-green-500",
+  inactive: "bg-red-500",
+  maintenance: "bg-amber-500",
 };
 
 interface MarkerLayerProps {
@@ -56,21 +56,22 @@ export function MarkerLayer({ entities, onSelect }: MarkerLayerProps) {
                 ref={
                   isNew
                     ? (el) => {
-                      if (el) {
-                        el.animate(
-                          [
-                            { opacity: 0, transform: "scale(0.5)" },
-                            { opacity: 1, transform: "scale(1)" },
-                          ],
-                          { duration: 300, easing: "ease-out", fill: "forwards" },
-                        );
+                        if (el) {
+                          el.animate(
+                            [
+                              { opacity: 0, transform: "scale(0.5)" },
+                              { opacity: 1, transform: "scale(1)" },
+                            ],
+                            { duration: 300, easing: "ease-out", fill: "forwards" },
+                          );
+                        }
                       }
-                    }
                     : undefined
                 }
-                className={`p-1 rounded-full bg-background shadow-md cursor-pointer hover:scale-110 transition-transform ${statusRing[entity.status] ?? ""}`}
+                className="relative p-1 rounded-full bg-background shadow-md cursor-pointer hover:scale-110 transition-transform"
               >
                 <Icon className={`w-5 h-5 ${style.color}`} />
+                <span className={`absolute top-0 right-0 w-2 h-2 rounded-full border border-background ${statusDot[entity.status] ?? "bg-gray-400"}`} />
               </div>
             </MarkerContent>
           </MapMarker>
