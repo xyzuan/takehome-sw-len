@@ -67,11 +67,31 @@ export function EntityForm({ entity, onDone }: EntityFormProps) {
   const lng = watch("lng");
   const type = watch("type");
   const status = watch("status");
+  const name = watch("name");
+  const device_id = watch("device_id");
+  const description = watch("description");
+
+  // Sync draft entity for live marker updates during edit
+  useEffect(() => {
+    if (isEdit && entity) {
+      useUIStore.getState().setDraftEntity({
+        ...entity,
+        device_id,
+        name,
+        type,
+        status,
+        description: description || null,
+        lat,
+        lng,
+      });
+    }
+  }, [isEdit, entity, device_id, name, type, status, description, lat, lng]);
 
   const onSubmit = async (values: EntityFormValues) => {
     try {
       if (isEdit && entity) {
         await updateMut.mutateAsync({ id: entity.id, input: values });
+        useUIStore.getState().setDraftEntity(null);
         useUIStore.getState().setCommittedPos({ lat: values.lat, lng: values.lng });
         useUIStore.getState().setPendingFlyTo({ lat: values.lat, lng: values.lng });
       } else {

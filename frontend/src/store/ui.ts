@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import type { Entity } from "@/interface/entity.interface";
 
 type Overlay = "none" | "add" | "edit" | "delete" | "filter";
 
@@ -22,6 +23,7 @@ interface UIState {
   savedMapView: MapView | null;
   darkMode: boolean;
   committedPos: { lat: number; lng: number } | null;
+  draftEntity: Partial<Entity> | null;
 
   setPickMode: (v: boolean) => void;
   setSelectedEntityId: (id: string | null) => void;
@@ -36,6 +38,7 @@ interface UIState {
   setDarkMode: (v: boolean) => void;
   toggleDarkMode: () => void;
   setCommittedPos: (v: { lat: number; lng: number } | null) => void;
+  setDraftEntity: (v: Partial<Entity> | null) => void;
   reset: () => void;
 }
 
@@ -52,6 +55,7 @@ export const useUIStore = create<UIState>((set) => ({
   savedMapView: null,
   darkMode: false,
   committedPos: null,
+  draftEntity: null,
 
   setPickMode: (v) => set({ pickMode: v }),
   setSelectedEntityId: (id) => set({ selectedEntityId: id }),
@@ -66,6 +70,7 @@ export const useUIStore = create<UIState>((set) => ({
   setDarkMode: (v) => set({ darkMode: v }),
   toggleDarkMode: () => set((s) => ({ darkMode: !s.darkMode })),
   setCommittedPos: (v) => set({ committedPos: v }),
+  setDraftEntity: (v) => set({ draftEntity: v }),
   reset: () =>
     set({
       pickMode: false,
@@ -80,5 +85,6 @@ export const useUIStore = create<UIState>((set) => ({
       savedMapView: null,
       darkMode: false,
       committedPos: null,
+      draftEntity: null,
     }),
 }));

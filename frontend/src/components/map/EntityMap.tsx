@@ -301,6 +301,7 @@ export function EntityMap({ children }: { children?: ReactNode }) {
   const darkMode = useUIStore((s) => s.darkMode);
   const { data: entities } = useMapEntities(bbox, typeFilter, statusFilter);
   const pickMode = useUIStore((s) => s.pickMode);
+  const draftEntity = useUIStore((s) => s.draftEntity);
   const draftLatLng = useUIStore((s) => s.draftLatLng);
   const setDraftLatLng = useUIStore((s) => s.setDraftLatLng);
   const setActiveOverlay = useUIStore((s) => s.setActiveOverlay);
@@ -326,16 +327,19 @@ export function EntityMap({ children }: { children?: ReactNode }) {
       const q = search.toLowerCase();
       result = entities.filter((e) => e.name.toLowerCase().includes(q));
     }
-    // Override marker position with draft coords during edit re-pick
-    if (draftLatLng && selectedEntityId) {
-      result = result.map((e) =>
-        e.id === selectedEntityId
-          ? { ...e, lat: draftLatLng.lat, lng: draftLatLng.lng }
-          : e,
-      );
+    // Override selected entity with draft (live type/status/position updates during edit)
+    if (selectedEntityId) {
+      result = result.map((e) => {
+        if (e.id !== selectedEntityId) return e;
+        let merged = { ...e };
+        if (draftEntity) merged = { ...merged, ...draftEntity };
+        // draftLatLng covers the render gap before draftEntity updates
+        if (draftLatLng) merged = { ...merged, lat: draftLatLng.lat, lng: draftLatLng.lng };
+        return merged;
+      });
     }
     return result;
-  }, [entities, search, selectedEntityId, draftLatLng]);
+  }, [entities, search, selectedEntityId, draftEntity, draftLatLng]);
 
   return (
     <Map center={[106.8456, -6.2088]} zoom={11} theme={darkMode ? "dark" : "light"} className="w-full h-full">
