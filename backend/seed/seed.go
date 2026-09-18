@@ -1,7 +1,9 @@
 package seed
 
 import (
+	"fmt"
 	"log"
+	"math/rand"
 
 	"geoapp/internal/models"
 
@@ -9,30 +11,67 @@ import (
 	"gorm.io/gorm"
 )
 
-// IfEmpty inserts demo entities if the entities table is empty.
 func IfEmpty(gdb *gorm.DB) {
 	var count int64
 	gdb.Model(&models.Entity{}).Count(&count)
 	if count > 0 {
 		return
 	}
-	log.Println("seeding demo entities...")
+	log.Println("seeding 1000 demo entities around Bandung...")
 
-	entities := []models.Entity{
-		{DeviceID: "VAN-01-NORTH", Name: "Delivery Van 01", Type: "vehicle", Status: "active", Description: strPtr("North route"), Location: gogis.Point{Lat: -6.2088, Lng: 106.8456}, Attributes: map[string]interface{}{"plate": "B 1234 X"}},
-		{DeviceID: "VAN-02-SOUTH", Name: "Delivery Van 02", Type: "vehicle", Status: "maintenance", Description: strPtr("South route, in service"), Location: gogis.Point{Lat: -6.3000, Lng: 106.8000}, Attributes: map[string]interface{}{"plate": "B 5678 Y"}},
-		{DeviceID: "IOT-TEMP-01", Name: "Temp Sensor 01", Type: "iot", Status: "active", Description: strPtr("Rooftop temperature sensor"), Location: gogis.Point{Lat: -6.2500, Lng: 106.8500}, Attributes: map[string]interface{}{"battery": 87}},
-		{DeviceID: "IOT-HUMID-02", Name: "Humidity Sensor 02", Type: "iot", Status: "inactive", Description: strPtr("Offline since last week"), Location: gogis.Point{Lat: -6.1800, Lng: 106.9000}, Attributes: map[string]interface{}{"battery": 12}},
-		{DeviceID: "FAC-WAREHOUSE", Name: "Main Warehouse", Type: "facility", Status: "active", Description: strPtr("Central distribution center"), Location: gogis.Point{Lat: -6.1500, Lng: 106.7800}, Attributes: map[string]interface{}{"capacity": 5000}},
-		{DeviceID: "MISC-001", Name: "Untracked Unit", Type: "other", Status: "inactive", Location: gogis.Point{Lat: -6.2200, Lng: 106.8700}},
-	}
+	// Bandung center: -6.9147, 107.6098
+	// Spread entities within ~15km radius
+	centerLat := -6.9147
+	centerLng := 107.6098
 
-	for _, e := range entities {
-		if err := gdb.Create(&e).Error; err != nil {
-			log.Printf("seed error for %s: %v", e.DeviceID, err)
+	types := []string{"vehicle", "iot", "facility", "other"}
+	statuses := []string{"active", "inactive", "maintenance"}
+	vehicleNames := []string{"Delivery Van", "Truck", "Motorcycle Courier", "Service Car", "Transport Bus"}
+	iotNames := []string{"Temperature Sensor", "Humidity Sensor", "Air Quality Monitor", "Traffic Camera", "GPS Tracker"}
+	facilityNames := []string{"Warehouse", "Office", "Factory", "Distribution Center", "Service Station"}
+	otherNames := []string{"Equipment Unit", "Field Unit", "Mobile Station", "Test Device"}
+
+	for i := 0; i < 1000; i++ {
+		// Random offset within ~0.15 degrees (~15km)
+		lat := centerLat + (rand.Float64()-0.5)*0.3
+		lng := centerLng + (rand.Float64()-0.5)*0.3
+
+		t := types[rand.Intn(len(types))]
+		var name, desc string
+		switch t {
+		case "vehicle":
+			name = fmt.Sprintf("%s %03d", vehicleNames[rand.Intn(len(vehicleNames))], i+1)
+			desc = fmt.Sprintf("Route %03d", rand.Intn(900)+100)
+		case "iot":
+			name = fmt.Sprintf("%s %03d", iotNames[rand.Intn(len(iotNames))], i+1)
+			desc = fmt.Sprintf("Battery: %d%%", rand.Intn(100))
+		case "facility":
+			name = fmt.Sprintf("%s %03d", facilityNames[rand.Intn(len(facilityNames))], i+1)
+			desc = fmt.Sprintf("Capacity: %d units", rand.Intn(5000)+100)
+		default:
+			name = fmt.Sprintf("%s %03d", otherNames[rand.Intn(len(otherNames))], i+1)
+			desc = ""
+		}
+
+		var descPtr *string
+		if desc != "" {
+			descPtr = &desc
+		}
+
+		status := statuses[rand.Intn(len(statuses))]
+
+		entity := models.Entity{
+			DeviceID:    fmt.Sprintf("DEV-%05d", i+1),
+			Name:        name,
+			Type:        t,
+			Status:      status,
+			Description: descPtr,
+			Location:    gogis.Point{Lat: lat, Lng: lng},
+		}
+
+		if err := gdb.Create(&entity).Error; err != nil {
+			log.Printf("seed error for %s: %v", entity.DeviceID, err)
 		}
 	}
-	log.Println("seeding complete")
+	log.Println("seeding complete: 1000 entities")
 }
-
-func strPtr(s string) *string { return &s }

@@ -433,7 +433,7 @@ export function EntityMap({ children }: { children?: ReactNode }) {
   }, [entities, search, selectedEntityId, draftEntity, draftLatLng]);
 
   return (
-    <Map center={[106.8456, -6.2088]} zoom={11} theme={darkMode ? "dark" : "light"} className="w-full h-full">
+    <Map center={[107.6195, -6.9495]} zoom={14} theme={darkMode ? "dark" : "light"} className="w-full h-full">
       <BboxTracker />
       <MapFocusHandler />
       <MarkerLayer
