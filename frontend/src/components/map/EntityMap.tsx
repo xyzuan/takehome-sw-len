@@ -25,7 +25,7 @@ function BboxTracker() {
       if (timer) clearTimeout(timer);
       timer = setTimeout(() => {
         setBbox(computeBbox());
-      }, 100);
+      }, 50);
     };
 
     if (isLoaded) {
