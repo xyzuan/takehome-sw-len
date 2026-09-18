@@ -32,7 +32,7 @@ export default function App() {
         <EntityMap />
 
         {/* Floating bottom-center: shared container + controls */}
-        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10 flex flex-col items-stretch gap-2 w-[calc(100vw-2rem)] max-w-2xl">
+        <div className={`absolute left-1/2 -translate-x-1/2 z-10 flex flex-col items-stretch gap-2 w-[calc(100vw-2rem)] max-w-2xl transition-all duration-300 ${(activeOverlay === "edit" || activeOverlay === "add") ? "bottom-28" : "bottom-4"}`}>
           <SharedContainer />
           <BottomNavigation />
         </div>

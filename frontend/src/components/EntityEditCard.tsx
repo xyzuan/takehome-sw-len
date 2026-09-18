@@ -19,7 +19,7 @@ export function EntityEditCard() {
   const showPlaceholder = pickMode;
 
   return (
-    <div className="w-full bg-background/95 backdrop-blur border rounded-xl shadow-md p-4">
+    <div className="w-full max-h-[60vh] overflow-y-auto bg-background/95 backdrop-blur border rounded-xl shadow-md p-4">
       <div className="flex items-center gap-2 mb-4">
         <button
           onClick={handleBack}
