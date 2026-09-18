@@ -26,12 +26,12 @@ function ExpandableButton({
       onClick={onClick}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
-      className={`h-8 overflow-hidden whitespace-nowrap transition-all duration-300 ease-out shadow-md ${active ? "ring-2 ring-ring/30" : ""} ${variant === "outline" ? "bg-background/95 backdrop-blur dark:bg-background/95 dark:border-border dark:hover:bg-muted" : ""}`}
+      className={`h-10 overflow-hidden whitespace-nowrap transition-all duration-300 ease-out shadow-md ${active ? "ring-2 ring-ring/30" : ""} ${variant === "outline" ? "bg-background/95 backdrop-blur dark:bg-background/95 dark:border-border dark:hover:bg-muted" : ""}`}
       style={{
-        width: hovered ? "auto" : "2rem",
-        minWidth: "2rem",
-        paddingLeft: hovered ? "0.75rem" : "0.5rem",
-        paddingRight: hovered ? "0.75rem" : "0.5rem",
+        width: hovered ? "auto" : "2.5rem",
+        minWidth: "2.5rem",
+        paddingLeft: hovered ? "0.875rem" : "0.625rem",
+        paddingRight: hovered ? "0.875rem" : "0.625rem",
       }}
     >
       <span className="flex items-center gap-1.5">
@@ -89,11 +89,11 @@ export function BottomNavigation() {
             setActiveOverlay("none");
           }
         }}
-        className="h-8 flex-1 min-w-0 bg-background/95 backdrop-blur dark:bg-background/95 shadow-md"
+        className="h-10 flex-1 min-w-0 bg-background/95 backdrop-blur dark:bg-background/95 shadow-md"
       />
 
       <ExpandableButton
-        icon={<SlidersHorizontal className="w-4 h-4" />}
+        icon={<SlidersHorizontal className="w-5 h-5" />}
         label="Filter"
         onClick={() => {
           useUIStore.getState().setSelectedEntityId(null);
@@ -103,14 +103,14 @@ export function BottomNavigation() {
       />
 
       <ExpandableButton
-        icon={darkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+        icon={darkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
         label={darkMode ? "Light" : "Dark"}
         onClick={toggleDarkMode}
         variant="outline"
       />
 
       <ExpandableButton
-        icon={<Plus className="w-4 h-4" />}
+        icon={<Plus className="w-5 h-5" />}
         label={pickMode ? "Cancel" : "Add Entity"}
         onClick={() => {
           if (!pickMode) {
