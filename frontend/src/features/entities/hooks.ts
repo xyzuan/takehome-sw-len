@@ -1,4 +1,4 @@
-import { useQuery, useMutation, useQueryClient, keepPreviousData } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient, useInfiniteQuery, keepPreviousData } from "@tanstack/react-query";
 import { entityKeys } from "@/consts/query-key";
 import { fetchMap, fetchList, fetchOne, createEntity, updateEntity, deleteEntity } from "./api";
 import type { EntityInput } from "@/interface/entity.interface";
@@ -13,10 +13,18 @@ export function useMapEntities(bbox: string | null, type?: string, status?: stri
   });
 }
 
-export function useEntities(page: number, perPage: number, type?: string, status?: string) {
-  return useQuery({
-    queryKey: entityKeys.list(page, perPage, [type, status].filter(Boolean).join(",")),
-    queryFn: () => fetchList(page, perPage, type, status),
+export function useSearchEntities(search: string, type?: string, status?: string) {
+  return useInfiniteQuery({
+    queryKey: entityKeys.list(0, 10, [search, type, status].filter(Boolean).join(",")),
+    queryFn: ({ pageParam }) => fetchList(pageParam, 10, type, status, search),
+    initialPageParam: 1,
+    getNextPageParam: (lastPage) => {
+      if (!lastPage.meta) return undefined;
+      return lastPage.meta.current_page < lastPage.meta.last_page
+        ? lastPage.meta.current_page + 1
+        : undefined;
+    },
+    enabled: search.length > 0,
   });
 }
 

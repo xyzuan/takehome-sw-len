@@ -79,7 +79,16 @@ export function BottomNavigation() {
       <Input
         placeholder="Search by name..."
         value={search}
-        onChange={(e) => setSearch(e.target.value)}
+        onChange={(e) => {
+          const v = e.target.value;
+          setSearch(v);
+          if (v.length > 0) {
+            useUIStore.getState().setSelectedEntityId(null);
+            setActiveOverlay("search");
+          } else if (activeOverlay === "search") {
+            setActiveOverlay("none");
+          }
+        }}
         className="h-8 flex-1 min-w-0 bg-background/95 backdrop-blur dark:bg-background/95 shadow-md"
       />
 

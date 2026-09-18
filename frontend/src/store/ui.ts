@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import type { Entity } from "@/interface/entity.interface";
 
-type Overlay = "none" | "add" | "edit" | "delete" | "filter";
+type Overlay = "none" | "add" | "edit" | "delete" | "filter" | "search";
 
 interface MapView {
   center: [number, number];

@@ -8,6 +8,7 @@ import { EntityDetailCard } from "@/components/EntityDetailCard";
 import { EntityEditCard } from "@/components/EntityEditCard";
 import { EntityAddCard } from "@/components/EntityAddCard";
 import { EntityFilterCard } from "@/components/EntityFilterCard";
+import { SearchResults } from "@/components/SearchResults";
 import { DeleteConfirm } from "@/components/DeleteConfirm";
 import { useUIStore } from "@/store/ui";
 
@@ -15,6 +16,7 @@ function SharedContainer() {
   const activeOverlay = useUIStore((s) => s.activeOverlay);
   const selectedEntityId = useUIStore((s) => s.selectedEntityId);
 
+  if (activeOverlay === "search") return <SearchResults />;
   if (activeOverlay === "add") return <EntityAddCard />;
   if (activeOverlay === "edit") return <EntityEditCard />;
   if (activeOverlay === "filter") return <EntityFilterCard />;

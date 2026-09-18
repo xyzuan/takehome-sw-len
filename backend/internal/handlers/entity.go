@@ -40,8 +40,9 @@ func (h *EntityHandler) List(c *gin.Context) {
 	}
 	entityType := c.Query("type")
 	status := c.Query("status")
+	search := c.Query("search")
 
-	entities, total, err := h.svc.List(page, perPage, entityType, status)
+	entities, total, err := h.svc.List(page, perPage, entityType, status, search)
 	if err != nil {
 		ServerError(c)
 		return

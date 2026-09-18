@@ -19,7 +19,7 @@ func NewEntityService(gdb *gorm.DB) *EntityService {
 	return &EntityService{db: gdb}
 }
 
-func (s *EntityService) List(page, perPage int, entityType, status string) ([]models.Entity, int64, error) {
+func (s *EntityService) List(page, perPage int, entityType, status, search string) ([]models.Entity, int64, error) {
 	if page < 1 {
 		page = 1
 	}
@@ -32,6 +32,9 @@ func (s *EntityService) List(page, perPage int, entityType, status string) ([]mo
 	}
 	if status != "" {
 		q = q.Where("status = ?", status)
+	}
+	if search != "" {
+		q = q.Where("name ILIKE ?", "%"+search+"%")
 	}
 	var total int64
 	if err := q.Count(&total).Error; err != nil {
