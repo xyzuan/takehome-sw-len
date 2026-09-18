@@ -12,7 +12,7 @@ export function InAreaCard() {
   const typeFilter = useUIStore((s) => s.typeFilter);
   const statusFilter = useUIStore((s) => s.statusFilter);
   const search = useUIStore((s) => s.search);
-  const { data: entities, isPending } = useMapEntities(bbox, typeFilter, statusFilter);
+  const { data: entities, isPending, isFetching } = useMapEntities(bbox, typeFilter, statusFilter);
 
   const [showSkeleton, setShowSkeleton] = useState(false);
   const skeletonStartRef = useRef<number | null>(null);
@@ -65,7 +65,7 @@ export function InAreaCard() {
 
   return (
     <div
-      className="w-full min-w-0 flex gap-3 overflow-x-auto overscroll-x-contain pb-1 scroll-smooth snap-x animate-fade-in"
+      className={`w-full min-w-0 flex gap-3 overflow-x-auto overscroll-x-contain pb-1 scroll-smooth snap-x transition-opacity duration-200 ${isFetching ? "opacity-40" : "opacity-100"}`}
       style={{ scrollbarWidth: "thin" }}
     >
       {filtered.map((entity) => (

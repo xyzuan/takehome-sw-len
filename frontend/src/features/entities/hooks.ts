@@ -1,4 +1,4 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient, keepPreviousData } from "@tanstack/react-query";
 import { entityKeys } from "@/consts/query-key";
 import { fetchMap, fetchList, fetchOne, createEntity, updateEntity, deleteEntity } from "./api";
 import type { EntityInput } from "@/interface/entity.interface";
@@ -9,6 +9,7 @@ export function useMapEntities(bbox: string | null, type?: string, status?: stri
     queryKey: entityKeys.map(bbox ?? "", [type, status].filter(Boolean).join(",")),
     queryFn: () => fetchMap(bbox!, type, status),
     enabled: !!bbox,
+    placeholderData: keepPreviousData,
   });
 }
 
