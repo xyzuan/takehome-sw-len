@@ -80,7 +80,7 @@ function FilterButton() {
             type="button"
             onMouseEnter={() => setHovered(true)}
             onMouseLeave={() => setHovered(false)}
-            className={`h-8 inline-flex items-center justify-center rounded-lg text-sm font-medium transition-all duration-300 ease-out overflow-hidden whitespace-nowrap bg-background text-foreground border border-border hover:bg-muted ${isActive || open ? "ring-2 ring-ring/30" : ""}`}
+            className={`h-8 inline-flex items-center justify-center rounded-lg text-sm font-medium transition-all duration-300 ease-out overflow-hidden whitespace-nowrap bg-background text-foreground border border-border hover:bg-muted dark:bg-input/30 dark:border-input dark:hover:bg-input/50 ${isActive || open ? "ring-2 ring-ring/30" : ""}`}
             style={{
               width: hovered ? "auto" : "2rem",
               minWidth: "2rem",
@@ -164,7 +164,7 @@ export function BottomNavigation() {
         placeholder="Search by name..."
         value={search}
         onChange={(e) => setSearch(e.target.value)}
-        className="h-8 flex-1 min-w-0 bg-background"
+        className="h-8 flex-1 min-w-0 bg-background dark:bg-input/30"
       />
 
       <FilterButton />
