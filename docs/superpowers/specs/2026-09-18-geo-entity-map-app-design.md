@@ -85,6 +85,7 @@ metadata without schema churn.
 | Field         | DB type                          | Go/JSON type            | Validation |
 |---------------|----------------------------------|-------------------------|------------|
 | `id`          | UUID, primary key                | `string` (UUID)         | auto-generated |
+| `device_id`   | varchar(100), unique             | `string`                | required, unique, 1–100 chars |
 | `name`        | varchar(100)                     | `string`                | required, 1–100 chars |
 | `type`        | varchar, enum                    | `string`                | required; one of `vehicle`, `iot`, `facility`, `other` |
 | `status`      | varchar, enum                    | `string`                | required; one of `active`, `inactive`, `maintenance` |
@@ -115,6 +116,7 @@ frontend friendliness.
 ```json
 {
   "id": "550e8400-e29b-41d4-a716-446655440000",
+  "device_id": "VAN-03-NORTH",
   "name": "Delivery Van 03",
   "type": "vehicle",
   "status": "active",
@@ -143,8 +145,19 @@ Validation failures return `422 Unprocessable Entity` with field-level errors:
 }
 ```
 
-Not found returns `404`. Malformed JSON returns `400`. Server errors return
-`500` with a generic message.
+Not found returns `404`. Malformed JSON returns `400`. A duplicate
+`device_id` returns `409 Conflict` with a field-level error:
+
+```json
+{
+  "error": "conflict",
+  "fields": {
+    "device_id": "device_id already exists"
+  }
+}
+```
+
+Server errors return `500` with a generic message.
 
 ### Stretch (only if time remains)
 
@@ -160,6 +173,7 @@ mirrored in each layer.
 | Field         | Rule |
 |---------------|------|
 | `name`        | required, 1–100 characters |
+| `device_id`   | required, unique, 1–100 characters |
 | `type`        | required, one of `vehicle` / `iot` / `facility` / `other` |
 | `status`      | required, one of `active` / `inactive` / `maintenance` |
 | `description` | optional, max 500 characters |
@@ -329,8 +343,11 @@ takehome-test/
 ## 12. Out of Scope (deferred)
 
 - Nearby/radius spatial query (stretch only)
+- Bulk import/export
+- Marker clustering for large datasets
+
+## 13. Future Work (TODO)
+
 - Authentication and multi-tenancy
 - Entity history / audit trail
 - Real-time location streaming
-- Bulk import/export
-- Marker clustering for large datasets
