@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { type AxiosResponse } from "axios";
 import type { ApiResponse } from "@/interface/entity.interface";
 
 export class ApiError extends Error {
@@ -22,7 +22,7 @@ client.interceptors.response.use(
   (response) => {
     const body = response.data as ApiResponse<unknown>;
     if (body.status_code >= 200 && body.status_code < 300) {
-      return body.data;
+      return body.data as unknown as AxiosResponse;
     }
     throw new ApiError(body.status_code, body.message, body.errors);
   },
