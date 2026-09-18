@@ -59,30 +59,27 @@ function MapFocusHandler() {
   const selectedEntityId = useUIStore((s) => s.selectedEntityId);
 
   const prevSelectedRef = useRef<string | null>(null);
-  const rotateHandlerRef = useRef<(() => void) | null>(null);
+  const rafRef = useRef<number | null>(null);
   const focusSessionRef = useRef(0);
 
   const stopRotation = () => {
-    if (rotateHandlerRef.current && map) {
-      map.off("rotateend", rotateHandlerRef.current);
+    if (rafRef.current !== null) {
+      cancelAnimationFrame(rafRef.current);
+      rafRef.current = null;
     }
-    rotateHandlerRef.current = null;
   };
 
   const startRotation = (session: number) => {
     if (!map) return;
-
-    const rotate = () => {
-      if (focusSessionRef.current !== session || !map) return;
-      map.rotateTo(map.getBearing() + 360, {
-        duration: 60000,
-        easing: (t: number) => t,
-      });
+    const tick = () => {
+      if (focusSessionRef.current !== session || !map) {
+        rafRef.current = null;
+        return;
+      }
+      map.setBearing(map.getBearing() + 0.1);
+      rafRef.current = requestAnimationFrame(tick);
     };
-
-    rotateHandlerRef.current = rotate;
-    map.on("rotateend", rotate);
-    rotate();
+    rafRef.current = requestAnimationFrame(tick);
   };
 
   useEffect(() => {
@@ -185,7 +182,7 @@ function MapFocusHandler() {
   // Cleanup on unmount
   useEffect(() => {
     return () => stopRotation();
-  }, [map]);
+  }, []);
 
   return null;
 }
