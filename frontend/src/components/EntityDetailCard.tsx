@@ -3,11 +3,11 @@ import { Button } from "@/components/ui/button";
 import { useEntity } from "@/features/entities/hooks";
 import { useUIStore } from "@/store/ui";
 
-const typeStyles: Record<string, { icon: typeof Car; color: string; bg: string }> = {
-  vehicle: { icon: Car, color: "text-blue-600", bg: "bg-blue-50" },
-  iot: { icon: Cpu, color: "text-purple-600", bg: "bg-purple-50" },
-  facility: { icon: Building, color: "text-green-600", bg: "bg-green-50" },
-  other: { icon: Circle, color: "text-gray-600", bg: "bg-gray-50" },
+const typeStyles: Record<string, { icon: typeof Car; bg: string; text: string }> = {
+  vehicle: { icon: Car, bg: "bg-blue-500", text: "text-white" },
+  iot: { icon: Cpu, bg: "bg-purple-500", text: "text-white" },
+  facility: { icon: Building, bg: "bg-green-500", text: "text-white" },
+  other: { icon: Circle, bg: "bg-gray-500", text: "text-white" },
 };
 
 const statusColors: Record<string, string> = {
@@ -37,7 +37,7 @@ export function EntityDetailCard() {
       <div className="flex items-start justify-between mb-3">
         <div className="flex items-center gap-3 min-w-0">
           <div className={`flex-shrink-0 w-10 h-10 rounded-lg ${style.bg} flex items-center justify-center`}>
-            <Icon className={`w-5 h-5 ${style.color}`} />
+            <Icon className={`w-5 h-5 ${style.text}`} />
           </div>
           <div className="min-w-0">
             <div className="font-medium text-sm truncate">{entity.name}</div>

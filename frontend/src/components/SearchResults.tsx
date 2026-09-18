@@ -1,9 +1,16 @@
 import { useEffect, useRef } from "react";
-import { ArrowLeft, Search } from "lucide-react";
+import { ArrowLeft, Search, Car, Cpu, Building, Circle } from "lucide-react";
 import { useSearchEntities } from "@/features/entities/hooks";
 import { useUIStore } from "@/store/ui";
 import { EntityCardSkeleton } from "@/components/EntityCardSkeleton";
 import type { Entity } from "@/interface/entity.interface";
+
+const typeStyles: Record<string, { icon: typeof Car; bg: string; text: string }> = {
+  vehicle: { icon: Car, bg: "bg-blue-500", text: "text-white" },
+  iot: { icon: Cpu, bg: "bg-purple-500", text: "text-white" },
+  facility: { icon: Building, bg: "bg-green-500", text: "text-white" },
+  other: { icon: Circle, bg: "bg-gray-500", text: "text-white" },
+};
 
 export function SearchResults() {
   const search = useUIStore((s) => s.search);
@@ -83,12 +90,18 @@ export function SearchResults() {
           </div>
         )}
 
-        {allEntities.map((entity) => (
+        {allEntities.map((entity) => {
+          const style = typeStyles[entity.type] ?? typeStyles.other;
+          const Icon = style.icon;
+          return (
           <button
             key={entity.id}
             onClick={() => handleCardClick(entity)}
             className="w-full text-left flex items-center gap-3 p-2 rounded-lg hover:bg-muted transition-colors"
           >
+            <div className={`flex-shrink-0 w-8 h-8 rounded-lg ${style.bg} flex items-center justify-center`}>
+              <Icon className={`w-4 h-4 ${style.text}`} />
+            </div>
             <div className="min-w-0 flex-1">
               <div className="font-medium text-sm truncate">{entity.name}</div>
               <div className="text-xs text-muted-foreground font-mono truncate">{entity.device_id}</div>
@@ -106,7 +119,8 @@ export function SearchResults() {
               </span>
             </div>
           </button>
-        ))}
+          );
+        })}
 
         {isFetchingNextPage && (
           <div className="py-2 flex justify-center">
