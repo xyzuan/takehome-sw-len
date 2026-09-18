@@ -327,10 +327,10 @@ export interface ApiResponse<T> {
   errors?: Record<string, string>;
 }
 
-// Convenience aliases for each endpoint
-export type EntityMapResponse = ApiResponse<Entity[]>;   // /api/entities/map
-export type EntityListResponse = ApiResponse<Entity[]>;  // /api/entities (paginated)
-export type EntityResponse = ApiResponse<Entity>;       // single resource
+// Response shapes per endpoint (data fixed via interface extension)
+export interface EntityMapResponse extends ApiResponse<Entity[]> {}   // /api/entities/map
+export interface EntityListResponse extends ApiResponse<Entity[]> {}  // /api/entities (paginated)
+export interface EntityResponse extends ApiResponse<Entity> {}       // single resource
 ```
 
 `src/libs/axios.ts` — API client + typed error:
