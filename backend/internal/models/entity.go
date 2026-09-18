@@ -3,20 +3,20 @@ package models
 import (
 	"time"
 
-	"geoapp/internal/db"
+	"github.com/restayway/gogis"
 )
 
-// Entity is the GORM model. Location is stored as geography(Point, 4326)
-// but serialized as lat/lng in JSON.
+// Entity is the GORM model. Location is stored as geometry(Point, 4326)
+// via gogis.Point but serialized as lat/lng in JSON.
 type Entity struct {
-	ID          string                 `gorm:"type:uuid;primaryKey"                   json:"id"`
+	ID          string                 `gorm:"type:uuid;primaryKey;default:gen_random_uuid()" json:"id"`
 	DeviceID    string                 `gorm:"column:device_id;type:varchar(100);uniqueIndex" json:"device_id"`
 	Name        string                 `gorm:"type:varchar(100)"                        json:"name"`
 	Type        string                 `gorm:"type:varchar(20)"                        json:"type"`
 	Status      string                 `gorm:"type:varchar(20)"                        json:"status"`
 	Description *string                `gorm:"type:varchar(500)"                       json:"description"`
-	Location    db.Point               `gorm:"type:geography(Point,4326)"              json:"-"`
-	Attributes  map[string]interface{} `gorm:"type:jsonb"                              json:"attributes"`
+	Location    gogis.Point            `gorm:"type:geometry(Point,4326)"               json:"-"`
+	Attributes  map[string]interface{} `gorm:"type:jsonb;serializer:json"            json:"attributes"`
 	CreatedAt   time.Time              `json:"created_at"`
 	UpdatedAt   time.Time              `json:"updated_at"`
 }
@@ -73,7 +73,7 @@ func (in *EntityInput) ToModel() Entity {
 		Type:        in.Type,
 		Status:      in.Status,
 		Description: descPtr,
-		Location:    db.Point{Lat: in.Lat, Lng: in.Lng},
+		Location:    gogis.Point{Lat: in.Lat, Lng: in.Lng},
 		Attributes:  in.Attributes,
 	}
 }

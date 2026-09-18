@@ -21,6 +21,7 @@ func (cv *customValidator) Engine() interface{} {
 // about the custom lat/lng validators.
 func RegisterWithGin() {
 	v := validator.New()
+	v.SetTagName("binding")
 	RegisterLatLng(v)
 	binding.Validator = &customValidator{v: v}
 }
