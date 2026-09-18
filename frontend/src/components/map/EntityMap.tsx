@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect, type ReactNode } from "react";
+import { useState, useCallback, useEffect, useMemo, type ReactNode } from "react";
 import { Map, useMap } from "@/components/ui/map";
 import { MarkerLayer } from "./MarkerLayer";
 import { PickMode } from "./PickMode";
@@ -35,7 +35,10 @@ function BboxTracker({ onBbox }: { onBbox: (bbox: string) => void }) {
 
 export function EntityMap({ children }: { children?: ReactNode }) {
   const [bbox, setBbox] = useState<string | null>(null);
-  const { data: entities } = useMapEntities(bbox);
+  const typeFilter = useUIStore((s) => s.typeFilter);
+  const statusFilter = useUIStore((s) => s.statusFilter);
+  const search = useUIStore((s) => s.search);
+  const { data: entities } = useMapEntities(bbox, typeFilter, statusFilter);
   const pickMode = useUIStore((s) => s.pickMode);
   const setDraftLatLng = useUIStore((s) => s.setDraftLatLng);
   const setActiveOverlay = useUIStore((s) => s.setActiveOverlay);
@@ -43,19 +46,31 @@ export function EntityMap({ children }: { children?: ReactNode }) {
   const handlePick = useCallback(
     (lat: number, lng: number) => {
       setDraftLatLng({ lat, lng });
-      setActiveOverlay("add");
       useUIStore.getState().setPickMode(false);
+      if (useUIStore.getState().activeOverlay !== "edit") {
+        setActiveOverlay("add");
+      }
     },
     [setDraftLatLng, setActiveOverlay],
   );
 
+  const filtered = useMemo(() => {
+    if (!entities) return [];
+    if (!search) return entities;
+    const q = search.toLowerCase();
+    return entities.filter((e) => e.name.toLowerCase().includes(q));
+  }, [entities, search]);
+
   return (
     <Map center={[106.8456, -6.2088]} zoom={11} className="w-full h-full">
       <BboxTracker onBbox={setBbox} />
-      {entities && <MarkerLayer entities={entities} onSelect={(e) => {
-        useUIStore.getState().setSelectedEntityId(e.id);
-        useUIStore.getState().setActiveOverlay("detail");
-      }} />}
+      <MarkerLayer
+        entities={filtered}
+        onSelect={(e, action) => {
+          useUIStore.getState().setSelectedEntityId(e.id);
+          useUIStore.getState().setActiveOverlay(action);
+        }}
+      />
       {pickMode && <PickMode onPick={handlePick} />}
       {children}
     </Map>

@@ -17,7 +17,7 @@ const statusRing: Record<string, string> = {
 
 interface MarkerLayerProps {
   entities: Entity[];
-  onSelect: (entity: Entity) => void;
+  onSelect: (entity: Entity, action: "detail" | "edit" | "delete") => void;
 }
 
 export function MarkerLayer({ entities, onSelect }: MarkerLayerProps) {
@@ -45,19 +45,19 @@ export function MarkerLayer({ entities, onSelect }: MarkerLayerProps) {
                 <div className="flex gap-2 pt-2">
                   <button
                     className="text-xs text-blue-500 hover:underline"
-                    onClick={() => onSelect(entity)}
+                    onClick={() => onSelect(entity, "detail")}
                   >
                     View detail
                   </button>
                   <button
                     className="text-xs text-blue-500 hover:underline"
-                    onClick={() => onSelect(entity)}
+                    onClick={() => onSelect(entity, "edit")}
                   >
                     Edit
                   </button>
                   <button
                     className="text-xs text-destructive hover:underline"
-                    onClick={() => onSelect(entity)}
+                    onClick={() => onSelect(entity, "delete")}
                   >
                     Delete
                   </button>

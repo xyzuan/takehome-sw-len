@@ -77,6 +77,10 @@ func (h *EntityHandler) Map(c *gin.Context) {
 
 	entities, err := h.svc.GetByMap(bbox, entityType, status)
 	if err != nil {
+		if errors.Is(err, services.ErrBadBbox) {
+			BadRequest(c, err.Error())
+			return
+		}
 		ServerError(c)
 		return
 	}

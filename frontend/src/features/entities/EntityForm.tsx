@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { entitySchema, type EntityFormValues } from "./schema";
@@ -55,11 +56,13 @@ export function EntityForm({ entity, onDone }: EntityFormProps) {
         },
   });
 
-  // Update lat/lng when draft changes (pick mode)
-  if (draftLatLng && !isEdit) {
-    setValue("lat", draftLatLng.lat);
-    setValue("lng", draftLatLng.lng);
-  }
+  // Update lat/lng when draft changes (pick mode, both add and edit)
+  useEffect(() => {
+    if (draftLatLng) {
+      setValue("lat", draftLatLng.lat);
+      setValue("lng", draftLatLng.lng);
+    }
+  }, [draftLatLng, setValue]);
 
   const lat = watch("lat");
   const lng = watch("lng");
@@ -153,6 +156,20 @@ export function EntityForm({ entity, onDone }: EntityFormProps) {
           <Input type="number" step="any" value={lng} readOnly className="bg-muted" />
         </div>
       </div>
+
+      {isEdit && (
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          onClick={() => {
+            useUIStore.getState().setPickMode(true);
+            useUIStore.getState().setActiveOverlay("edit");
+          }}
+        >
+          Re-pick Location
+        </Button>
+      )}
 
       <Button type="submit" disabled={isSubmitting} className="w-full">
         {isSubmitting ? "Saving..." : isEdit ? "Update Entity" : "Create Entity"}

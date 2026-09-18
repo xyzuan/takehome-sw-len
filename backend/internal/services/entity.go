@@ -2,8 +2,8 @@ package services
 
 import (
 	"errors"
-	"fmt"
 	"math"
+	"strconv"
 	"strings"
 
 	"geoapp/internal/models"
@@ -48,9 +48,24 @@ func (s *EntityService) List(page, perPage int, entityType, status string) ([]mo
 func (s *EntityService) GetByMap(bbox string, entityType, status string) ([]models.Entity, error) {
 	parts := strings.Split(bbox, ",")
 	if len(parts) != 4 {
-		return nil, fmt.Errorf("bbox must be minLng,minLat,maxLng,maxLat")
+		return nil, ErrBadBbox
 	}
-	minLng, minLat, maxLng, maxLat := parts[0], parts[1], parts[2], parts[3]
+	minLng, err := strconv.ParseFloat(parts[0], 64)
+	if err != nil {
+		return nil, ErrBadBbox
+	}
+	minLat, err := strconv.ParseFloat(parts[1], 64)
+	if err != nil {
+		return nil, ErrBadBbox
+	}
+	maxLng, err := strconv.ParseFloat(parts[2], 64)
+	if err != nil {
+		return nil, ErrBadBbox
+	}
+	maxLat, err := strconv.ParseFloat(parts[3], 64)
+	if err != nil {
+		return nil, ErrBadBbox
+	}
 	q := s.db.Model(&models.Entity{}).Where(
 		"ST_Within(location, ST_MakeEnvelope(?, ?, ?, ?, 4326))",
 		minLng, minLat, maxLng, maxLat,
@@ -128,6 +143,7 @@ func (s *EntityService) Delete(id string) (bool, error) {
 }
 
 var ErrConflict = errors.New("conflict")
+var ErrBadBbox = errors.New("bbox must be 4 numeric values: minLng,minLat,maxLng,maxLat")
 
 func isUniqueViolation(err error) bool {
 	return strings.Contains(err.Error(), "unique constraint") ||

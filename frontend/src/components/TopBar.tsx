@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -14,9 +13,12 @@ import { Plus } from "lucide-react";
 export function TopBar() {
   const setPickMode = useUIStore((s) => s.setPickMode);
   const pickMode = useUIStore((s) => s.pickMode);
-  const [search, setSearch] = useState("");
-  const [typeFilter, setTypeFilter] = useState<string>("");
-  const [statusFilter, setStatusFilter] = useState<string>("");
+  const search = useUIStore((s) => s.search);
+  const setSearch = useUIStore((s) => s.setSearch);
+  const typeFilter = useUIStore((s) => s.typeFilter);
+  const setTypeFilter = useUIStore((s) => s.setTypeFilter);
+  const statusFilter = useUIStore((s) => s.statusFilter);
+  const setStatusFilter = useUIStore((s) => s.setStatusFilter);
 
   const handleAdd = () => {
     setPickMode(!pickMode);
