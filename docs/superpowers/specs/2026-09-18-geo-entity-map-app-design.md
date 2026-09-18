@@ -267,14 +267,21 @@ Create/update requests omit `id`, `created_at`, and `updated_at`
 
 ### Frontend TypeScript contract
 
-The frontend mirrors this envelope exactly. These types live in
-`frontend/src/lib/api/types.ts` and are the single source of truth consumed by
-the TanStack Query hooks and components.
+The frontend mirrors this envelope exactly. The contract is split across
+`src/types` (enums/type aliases), `src/interface` (shapes), `src/libs`
+(infra: axios client + query client), and `src/consts` (query keys). These
+are the single source of truth consumed by the TanStack Query hooks and
+components.
 
+`src/types/entity.type.ts` — domain type aliases:
 ```typescript
-// Domain enums
 export type EntityType = "vehicle" | "iot" | "facility" | "other";
 export type EntityStatus = "active" | "inactive" | "maintenance";
+```
+
+`src/interface/entity.interface.ts` — response/request shapes and envelope:
+```typescript
+import type { EntityType, EntityStatus } from "@/types/entity.type";
 
 // Entity (response data payload)
 export interface Entity {
@@ -322,9 +329,12 @@ export interface ApiResponse<T> {
 
 // Convenience aliases for each endpoint
 export type EntityMapResponse = ApiResponse<Entity[]>;   // /api/entities/map
-export type EntityListResponse = ApiResponse<Entity[]>;   // /api/entities (paginated)
-export type EntityResponse = ApiResponse<Entity>;        // single resource
+export type EntityListResponse = ApiResponse<Entity[]>;  // /api/entities (paginated)
+export type EntityResponse = ApiResponse<Entity>;       // single resource
+```
 
+`src/libs/axios.ts` — API client + typed error:
+```typescript
 // Typed error thrown by the API client on non-2xx responses
 export class ApiError extends Error {
   constructor(
@@ -338,12 +348,22 @@ export class ApiError extends Error {
 }
 ```
 
-The API client (`frontend/src/lib/api/client.ts`) parses `status_code`: on
-2xx it returns `data`; otherwise it throws a typed `ApiError` carrying
-`status_code`, `message`, and `errors`. TanStack Query mutation hooks surface
-`errors` as inline form errors (for 422/409) or as toasts (for 404/500). The
-map endpoint feeds `EntityMapResponse` into the marker layer; the table
-endpoint uses `EntityListResponse` + `meta` for infinite-query pagination.
+`src/consts/query-key.ts` — shared TanStack Query keys:
+```typescript
+export const entityKeys = {
+  map: (bbox: string, filters?: string) => ["entities", "map", bbox, filters] as const,
+  list: (page: number, perPage: number, filters?: string) => ["entities", "list", page, perPage, filters] as const,
+  detail: (id: string) => ["entities", "detail", id] as const,
+};
+```
+
+The API client (`src/libs/axios.ts`) parses `status_code`: on 2xx it returns
+`data`; otherwise it throws a typed `ApiError` carrying `status_code`,
+`message`, and `errors`. The query client (`src/libs/query.ts`) wires
+`entityKeys` into the hooks. TanStack Query mutation hooks surface `errors`
+as inline form errors (for 422/409) or as toasts (for 404/500). The map
+endpoint feeds `EntityMapResponse` into the marker layer; the table endpoint
+uses `EntityListResponse` + `meta` for infinite-query pagination.
 
 ## 6. Validation
 
@@ -495,10 +515,24 @@ takehome-test/
     │   │   └── map/       # EntityMap, MarkerLayer, PickMode
     │   ├── features/
     │   │   └── entities/  # list query, mutations, form, schema
-    │   ├── lib/           # api client, query client
+    │   ├── types/         # domain type aliases (enums)
+    │   │   └── entity.type.ts
+    │   ├── interface/     # TS interfaces (shapes)
+    │   │   └── entity.interface.ts
+    │   ├── consts/        # shared constants
+    │   │   └── query-key.ts
+    │   ├── libs/          # infra (axios client, query client)
+    │   │   ├── axios.ts
+    │   │   └── query.ts
     │   └── store/         # zustand UI store
     └── ...
 ```
+
+**Frontend layering note:** types (enums) live in `src/types/*.type.ts`,
+interfaces (shapes) live in `src/interface/*.interface.ts`, infra/clients live
+in `src/libs/`, and shared constants (e.g. TanStack Query key strings) live
+in `src/consts/`. `src/features/entities/` imports from all of these and does
+not re-export them.
 
 ## 11. Risks and Assumptions
 
