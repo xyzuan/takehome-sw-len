@@ -32,7 +32,11 @@ export function MarkerLayer({ entities, onSelect }: MarkerLayerProps) {
     }
   }
 
-  knownIdsRef.current = currentIds;
+  // Only remember IDs when we have data — preserves the known set
+  // across refetch gaps (when entities briefly becomes empty).
+  if (entities.length > 0) {
+    knownIdsRef.current = currentIds;
+  }
 
   return (
     <>
