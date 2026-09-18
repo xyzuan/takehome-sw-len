@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, type ReactNode } from "react";
-import type { Map as MaplibreMap } from "maplibre-gl";
+import type { Map as MaplibreMap, StyleSpecification } from "maplibre-gl";
 import { Map, useMap } from "@/components/ui/map";
 import { MarkerLayer } from "./MarkerLayer";
 import { PickMode } from "./PickMode";
@@ -228,8 +228,33 @@ export function EntityMap({ children }: { children?: ReactNode }) {
     return entities.filter((e) => e.name.toLowerCase().includes(q));
   }, [entities, search, selectedEntityId]);
 
+  const osmStyle: StyleSpecification = {
+    version: 8,
+    sources: {
+      osm: {
+        type: "raster",
+        tiles: ["https://tile.openstreetmap.org/{z}/{x}/{y}.png"],
+        tileSize: 256,
+        attribution: "© OpenStreetMap contributors",
+      },
+    },
+    layers: [
+      {
+        id: "osm",
+        type: "raster",
+        source: "osm",
+      },
+    ],
+  };
+
   return (
-    <Map center={[106.8456, -6.2088]} zoom={11} theme={darkMode ? "dark" : "light"} className="w-full h-full">
+    <Map
+      center={[106.8456, -6.2088]}
+      zoom={11}
+      theme={darkMode ? "dark" : "light"}
+      styles={{ light: osmStyle, dark: osmStyle }}
+      className="w-full h-full"
+    >
       <BboxTracker />
       <MapFocusHandler />
       <MarkerLayer
