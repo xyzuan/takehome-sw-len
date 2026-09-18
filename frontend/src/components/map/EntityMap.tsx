@@ -204,12 +204,17 @@ function MapPaddingHandler() {
   useEffect(() => {
     if (!map || !isLoaded) return;
     const needsPadding = activeOverlay === "edit" || activeOverlay === "add";
-    map.setPadding({
-      top: 0,
-      bottom: needsPadding ? 280 : 0,
-      left: 0,
-      right: 0,
-    });
+    map.easeTo(
+      {
+        padding: {
+          top: 0,
+          bottom: needsPadding ? 280 : 0,
+          left: 0,
+          right: 0,
+        },
+      },
+      { duration: 400, easing: (t: number) => t * (2 - t) }, // ease-out
+    );
   }, [map, isLoaded, activeOverlay]);
 
   return null;
