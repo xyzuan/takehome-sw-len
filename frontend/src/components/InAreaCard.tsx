@@ -4,7 +4,7 @@ import { useMapEntities } from "@/features/entities/hooks";
 import { useUIStore } from "@/store/ui";
 import type { Entity } from "@/interface/entity.interface";
 
-export function InAreaCards() {
+export function InAreaCard() {
   const bbox = useUIStore((s) => s.bbox);
   const typeFilter = useUIStore((s) => s.typeFilter);
   const statusFilter = useUIStore((s) => s.statusFilter);
@@ -21,7 +21,6 @@ export function InAreaCards() {
   const handleCardClick = (entity: Entity) => {
     useUIStore.getState().setSelectedEntityId(entity.id);
     useUIStore.getState().setPendingFlyTo({ lat: entity.lat, lng: entity.lng });
-    useUIStore.getState().setActiveOverlay("detail");
   };
 
   if (!filtered || filtered.length === 0) return null;
