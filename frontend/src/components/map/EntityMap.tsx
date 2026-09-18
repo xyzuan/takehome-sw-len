@@ -197,6 +197,24 @@ function MapFocusHandler() {
   return null;
 }
 
+function MapPaddingHandler() {
+  const { map, isLoaded } = useMap();
+  const activeOverlay = useUIStore((s) => s.activeOverlay);
+
+  useEffect(() => {
+    if (!map || !isLoaded) return;
+    const needsPadding = activeOverlay === "edit" || activeOverlay === "add";
+    map.setPadding({
+      top: 0,
+      bottom: needsPadding ? 280 : 0,
+      left: 0,
+      right: 0,
+    });
+  }, [map, isLoaded, activeOverlay]);
+
+  return null;
+}
+
 export function EntityMap({ children }: { children?: ReactNode }) {
   const bbox = useUIStore((s) => s.bbox);
   const typeFilter = useUIStore((s) => s.typeFilter);
@@ -232,6 +250,7 @@ export function EntityMap({ children }: { children?: ReactNode }) {
     <Map center={[106.8456, -6.2088]} zoom={11} theme={darkMode ? "dark" : "light"} className="w-full h-full">
       <BboxTracker />
       <MapFocusHandler />
+      <MapPaddingHandler />
       <MarkerLayer
         entities={filtered}
         onSelect={(e) => {
