@@ -139,6 +139,10 @@ function MapFocusHandler() {
 
       map.once("moveend", () => {
         if (focusSessionRef.current !== session) return;
+        const bounds = map.getBounds();
+        useUIStore.getState().setBbox(
+          `${bounds.getWest()},${bounds.getSouth()},${bounds.getEast()},${bounds.getNorth()}`,
+        );
         startRotation(session);
       });
 
@@ -194,6 +198,10 @@ function MapFocusHandler() {
 
       map.once("moveend", () => {
         if (focusSessionRef.current !== session) return;
+        const bounds = map.getBounds();
+        useUIStore.getState().setBbox(
+          `${bounds.getWest()},${bounds.getSouth()},${bounds.getEast()},${bounds.getNorth()}`,
+        );
         startRotation(session);
       });
 
@@ -224,6 +232,10 @@ function MapFocusHandler() {
 
       map.once("moveend", () => {
         if (focusSessionRef.current !== session) return;
+        const bounds = map.getBounds();
+        useUIStore.getState().setBbox(
+          `${bounds.getWest()},${bounds.getSouth()},${bounds.getEast()},${bounds.getNorth()}`,
+        );
         startRotation(session);
       });
 
@@ -264,10 +276,14 @@ function MapFocusHandler() {
 
       map.once("moveend", () => {
         if (focusSessionRef.current !== session) return;
+        const bounds = map.getBounds();
+        useUIStore.getState().setBbox(
+          `${bounds.getWest()},${bounds.getSouth()},${bounds.getEast()},${bounds.getNorth()}`,
+        );
         startRotation(session);
       });
 
-      state.setPendingFlyTo(null);
+      useUIStore.getState().setPendingFlyTo(null);
     }
 
     // ADD RE-PICK ENTER: pickMode on, no entity → unlock, go 2D
@@ -297,6 +313,10 @@ function MapFocusHandler() {
 
       map.once("moveend", () => {
         if (focusSessionRef.current !== session) return;
+        const bounds = map.getBounds();
+        useUIStore.getState().setBbox(
+          `${bounds.getWest()},${bounds.getSouth()},${bounds.getEast()},${bounds.getNorth()}`,
+        );
         startRotation(session);
       });
 
@@ -360,10 +380,15 @@ function MapFocusHandler() {
           duration: 1500,
         });
 
-        map.once("moveend", () => {
-          if (focusSessionRef.current !== session) return;
-          startRotation(session);
-        });
+      map.once("moveend", () => {
+        if (focusSessionRef.current !== session) return;
+        // Update bbox to new viewport so markers load at the destination
+        const bounds = map.getBounds();
+        useUIStore.getState().setBbox(
+          `${bounds.getWest()},${bounds.getSouth()},${bounds.getEast()},${bounds.getNorth()}`,
+        );
+        startRotation(session);
+      });
       }
     }
 
