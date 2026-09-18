@@ -3,6 +3,7 @@ package seed
 import (
 	"fmt"
 	"log"
+	"math"
 	"math/rand"
 
 	"geoapp/internal/models"
@@ -17,12 +18,11 @@ func IfEmpty(gdb *gorm.DB) {
 	if count > 0 {
 		return
 	}
-	log.Println("seeding 1000 demo entities around Bandung...")
+	log.Println("seeding 100 demo entities around Bandung (circular distribution)...")
 
-	// Bandung center: -6.9147, 107.6098
-	// Spread entities within ~15km radius
-	centerLat := -6.9147
-	centerLng := 107.6098
+	// PT Len Industri center
+	centerLat := -6.9495
+	centerLng := 107.6195
 
 	types := []string{"vehicle", "iot", "facility", "other"}
 	statuses := []string{"active", "inactive", "maintenance"}
@@ -31,10 +31,13 @@ func IfEmpty(gdb *gorm.DB) {
 	facilityNames := []string{"Warehouse", "Office", "Factory", "Distribution Center", "Service Station"}
 	otherNames := []string{"Equipment Unit", "Field Unit", "Mobile Station", "Test Device"}
 
-	for i := 0; i < 1000; i++ {
-		// Random offset within ~0.15 degrees (~15km)
-		lat := centerLat + (rand.Float64()-0.5)*0.3
-		lng := centerLng + (rand.Float64()-0.5)*0.3
+	for i := 0; i < 100; i++ {
+		// Circular distribution: random angle + random radius up to ~10km
+		angle := rand.Float64() * 2 * math.Pi
+		// 1 degree lat ≈ 111km, so 0.09 degrees ≈ 10km
+		radius := 0.02 + rand.Float64()*0.07 // 2-9km radius
+		lat := centerLat + radius*math.Sin(angle)
+		lng := centerLng + radius*math.Cos(angle)/math.Cos(centerLat*math.Pi/180) // adjust for longitude scaling
 
 		t := types[rand.Intn(len(types))]
 		var name, desc string
@@ -58,13 +61,11 @@ func IfEmpty(gdb *gorm.DB) {
 			descPtr = &desc
 		}
 
-		status := statuses[rand.Intn(len(statuses))]
-
 		entity := models.Entity{
-			DeviceID:    fmt.Sprintf("DEV-%05d", i+1),
+			DeviceID:    fmt.Sprintf("DEV-%04d", i+1),
 			Name:        name,
 			Type:        t,
-			Status:      status,
+			Status:      statuses[rand.Intn(len(statuses))],
 			Description: descPtr,
 			Location:    gogis.Point{Lat: lat, Lng: lng},
 		}
@@ -73,5 +74,5 @@ func IfEmpty(gdb *gorm.DB) {
 			log.Printf("seed error for %s: %v", entity.DeviceID, err)
 		}
 	}
-	log.Println("seeding complete: 1000 entities")
+	log.Println("seeding complete: 100 entities in circular distribution around Bandung")
 }
