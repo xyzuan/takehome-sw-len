@@ -1,6 +1,6 @@
 import { create } from "zustand";
 
-type Overlay = "none" | "add" | "edit" | "delete";
+type Overlay = "none" | "add" | "edit" | "delete" | "filter";
 
 interface MapView {
   center: [number, number];
