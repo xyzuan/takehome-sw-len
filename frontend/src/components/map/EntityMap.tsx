@@ -13,23 +13,30 @@ function BboxTracker() {
   useEffect(() => {
     if (!map) return;
 
-    const updateBbox = () => {
-      if (useUIStore.getState().selectedEntityId) return;
+    let timer: ReturnType<typeof setTimeout> | null = null;
+
+    const computeBbox = () => {
       const bounds = map.getBounds();
-      const bbox = `${bounds.getWest()},${bounds.getSouth()},${bounds.getEast()},${bounds.getNorth()}`;
-      setBbox(bbox);
+      return `${bounds.getWest()},${bounds.getSouth()},${bounds.getEast()},${bounds.getNorth()}`;
+    };
+
+    const debouncedUpdate = () => {
+      if (useUIStore.getState().selectedEntityId) return;
+      if (timer) clearTimeout(timer);
+      timer = setTimeout(() => {
+        setBbox(computeBbox());
+      }, 300);
     };
 
     if (isLoaded) {
-      updateBbox();
+      setBbox(computeBbox());
     }
 
-    map.on("moveend", updateBbox);
-    map.on("load", updateBbox);
+    map.on("moveend", debouncedUpdate);
 
     return () => {
-      map.off("moveend", updateBbox);
-      map.off("load", updateBbox);
+      if (timer) clearTimeout(timer);
+      map.off("moveend", debouncedUpdate);
     };
   }, [map, isLoaded, setBbox]);
 

@@ -1,16 +1,38 @@
-import { useMemo } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { EntityCard } from "@/components/EntityCard";
 import { EntityCardSkeleton } from "@/components/EntityCardSkeleton";
 import { useMapEntities } from "@/features/entities/hooks";
 import { useUIStore } from "@/store/ui";
 import type { Entity } from "@/interface/entity.interface";
 
+const MIN_SKELETON_MS = 400;
+
 export function InAreaCard() {
   const bbox = useUIStore((s) => s.bbox);
   const typeFilter = useUIStore((s) => s.typeFilter);
   const statusFilter = useUIStore((s) => s.statusFilter);
   const search = useUIStore((s) => s.search);
-  const { data: entities, isLoading } = useMapEntities(bbox, typeFilter, statusFilter);
+  const { data: entities, isPending } = useMapEntities(bbox, typeFilter, statusFilter);
+
+  const [showSkeleton, setShowSkeleton] = useState(false);
+  const skeletonStartRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    if (isPending) {
+      setShowSkeleton(true);
+      skeletonStartRef.current = Date.now();
+    } else {
+      const start = skeletonStartRef.current;
+      if (start) {
+        const elapsed = Date.now() - start;
+        const remaining = Math.max(0, MIN_SKELETON_MS - elapsed);
+        const id = setTimeout(() => setShowSkeleton(false), remaining);
+        skeletonStartRef.current = null;
+        return () => clearTimeout(id);
+      }
+      setShowSkeleton(false);
+    }
+  }, [isPending]);
 
   const filtered = useMemo(() => {
     if (!entities) return [];
@@ -24,7 +46,7 @@ export function InAreaCard() {
     useUIStore.getState().setPendingFlyTo({ lat: entity.lat, lng: entity.lng });
   };
 
-  if (isLoading) {
+  if (showSkeleton) {
     return (
       <div
         className="w-full min-w-0 flex gap-3 overflow-x-auto overscroll-x-contain pb-1 scroll-smooth snap-x animate-fade-in"
