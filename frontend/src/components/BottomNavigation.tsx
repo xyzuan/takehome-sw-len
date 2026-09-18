@@ -20,7 +20,7 @@ function ExpandableButton({
   icon,
   label,
   onClick,
-  variant = "default",
+  variant = "outline",
   active,
 }: {
   icon: React.ReactNode;
@@ -80,7 +80,7 @@ function FilterButton() {
             type="button"
             onMouseEnter={() => setHovered(true)}
             onMouseLeave={() => setHovered(false)}
-            className={`h-8 inline-flex items-center justify-center rounded-lg text-sm font-medium transition-all duration-300 ease-out overflow-hidden whitespace-nowrap bg-primary text-primary-foreground hover:bg-primary/90 ${isActive || open ? "ring-2 ring-ring/30" : ""}`}
+            className={`h-8 inline-flex items-center justify-center rounded-lg text-sm font-medium transition-all duration-300 ease-out overflow-hidden whitespace-nowrap bg-background text-foreground border border-border hover:bg-muted ${isActive || open ? "ring-2 ring-ring/30" : ""}`}
             style={{
               width: hovered ? "auto" : "2rem",
               minWidth: "2rem",
@@ -164,7 +164,7 @@ export function BottomNavigation() {
         placeholder="Search by name..."
         value={search}
         onChange={(e) => setSearch(e.target.value)}
-        className="h-8 flex-1 min-w-0 bg-muted"
+        className="h-8 flex-1 min-w-0 bg-background"
       />
 
       <FilterButton />
@@ -173,7 +173,7 @@ export function BottomNavigation() {
         icon={darkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
         label={darkMode ? "Light" : "Dark"}
         onClick={toggleDarkMode}
-        variant="default"
+        variant="outline"
       />
 
       <ExpandableButton
