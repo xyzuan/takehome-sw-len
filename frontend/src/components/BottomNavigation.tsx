@@ -86,7 +86,10 @@ export function BottomNavigation() {
       <ExpandableButton
         icon={<SlidersHorizontal className="w-4 h-4" />}
         label="Filter"
-        onClick={() => setActiveOverlay(activeOverlay === "filter" ? "none" : "filter")}
+        onClick={() => {
+          useUIStore.getState().setSelectedEntityId(null);
+          setActiveOverlay(activeOverlay === "filter" ? "none" : "filter");
+        }}
         active={isFilterActive}
       />
 
@@ -100,7 +103,13 @@ export function BottomNavigation() {
       <ExpandableButton
         icon={<Plus className="w-4 h-4" />}
         label={pickMode ? "Cancel" : "Add Entity"}
-        onClick={() => setPickMode(!pickMode)}
+        onClick={() => {
+          if (!pickMode) {
+            useUIStore.getState().setSelectedEntityId(null);
+            useUIStore.getState().setActiveOverlay("none");
+          }
+          setPickMode(!pickMode);
+        }}
         variant={pickMode ? "secondary" : "default"}
         active={pickMode}
       />

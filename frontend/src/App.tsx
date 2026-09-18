@@ -1,6 +1,7 @@
 import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "@/libs/query";
 import { Toaster } from "sonner";
+import { MapPin } from "lucide-react";
 import { EntityMap } from "@/components/map/EntityMap";
 import { BottomNavigation } from "@/components/BottomNavigation";
 import { InAreaCard } from "@/components/InAreaCard";
@@ -33,14 +34,17 @@ export default function App() {
 
         {/* Floating bottom-center: shared container + controls */}
         <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10 flex flex-col items-stretch gap-2 w-[calc(100vw-2rem)] max-w-2xl">
-          <SharedContainer />
+          {!useUIStore((s) => s.pickMode) && <SharedContainer />}
           <BottomNavigation />
         </div>
 
-        {/* Pick-mode banner */}
+        {/* Pick-mode banner — replaces shared container */}
         {useUIStore((s) => s.pickMode) && (
-          <div className="absolute bottom-20 left-1/2 -translate-x-1/2 z-10 bg-background/90 backdrop-blur px-4 py-2 rounded-lg shadow-md border">
-            <span className="text-sm font-medium">Click the map to place the entity</span>
+          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10 w-[calc(100vw-2rem)] max-w-2xl">
+            <div className="bg-background/95 backdrop-blur border rounded-xl shadow-md px-4 py-3 flex items-center gap-3">
+              <MapPin className="w-5 h-5 text-primary animate-pulse flex-shrink-0" />
+              <span className="text-sm font-medium">Click the map to place the entity</span>
+            </div>
           </div>
         )}
 
