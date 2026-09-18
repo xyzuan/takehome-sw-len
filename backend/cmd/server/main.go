@@ -6,6 +6,7 @@ import (
 
 	"geoapp/internal/config"
 	"geoapp/internal/db"
+	"geoapp/internal/validation"
 
 	"github.com/gin-gonic/gin"
 )
@@ -20,6 +21,8 @@ func main() {
 	if err := db.Migrate(gdb); err != nil {
 		log.Fatal(err)
 	}
+
+	validation.RegisterWithGin()
 
 	r := gin.Default()
 	r.GET("/api/health", func(c *gin.Context) {
