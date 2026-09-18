@@ -10,6 +10,8 @@ interface UIState {
   typeFilter: string;
   statusFilter: string;
   search: string;
+  bbox: string | null;
+  pendingFlyTo: { lat: number; lng: number } | null;
 
   setPickMode: (v: boolean) => void;
   setSelectedEntityId: (id: string | null) => void;
@@ -18,6 +20,8 @@ interface UIState {
   setTypeFilter: (v: string) => void;
   setStatusFilter: (v: string) => void;
   setSearch: (v: string) => void;
+  setBbox: (bbox: string | null) => void;
+  setPendingFlyTo: (coords: { lat: number; lng: number } | null) => void;
   reset: () => void;
 }
 
@@ -29,6 +33,8 @@ export const useUIStore = create<UIState>((set) => ({
   typeFilter: "",
   statusFilter: "",
   search: "",
+  bbox: null,
+  pendingFlyTo: null,
 
   setPickMode: (v) => set({ pickMode: v }),
   setSelectedEntityId: (id) => set({ selectedEntityId: id }),
@@ -37,6 +43,8 @@ export const useUIStore = create<UIState>((set) => ({
   setTypeFilter: (v) => set({ typeFilter: v }),
   setStatusFilter: (v) => set({ statusFilter: v }),
   setSearch: (v) => set({ search: v }),
+  setBbox: (bbox) => set({ bbox }),
+  setPendingFlyTo: (coords) => set({ pendingFlyTo: coords }),
   reset: () =>
     set({
       pickMode: false,
@@ -46,5 +54,7 @@ export const useUIStore = create<UIState>((set) => ({
       typeFilter: "",
       statusFilter: "",
       search: "",
+      bbox: null,
+      pendingFlyTo: null,
     }),
 }));

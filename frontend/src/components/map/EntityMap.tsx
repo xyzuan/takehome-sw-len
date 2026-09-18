@@ -1,12 +1,13 @@
-import { useState, useCallback, useEffect, useMemo, type ReactNode } from "react";
+import { useCallback, useEffect, useMemo, type ReactNode } from "react";
 import { Map, useMap } from "@/components/ui/map";
 import { MarkerLayer } from "./MarkerLayer";
 import { PickMode } from "./PickMode";
 import { useMapEntities } from "@/features/entities/hooks";
 import { useUIStore } from "@/store/ui";
 
-function BboxTracker({ onBbox }: { onBbox: (bbox: string) => void }) {
+function BboxTracker() {
   const { map, isLoaded } = useMap();
+  const setBbox = useUIStore((s) => s.setBbox);
 
   useEffect(() => {
     if (!map) return;
@@ -14,7 +15,7 @@ function BboxTracker({ onBbox }: { onBbox: (bbox: string) => void }) {
     const updateBbox = () => {
       const bounds = map.getBounds();
       const bbox = `${bounds.getWest()},${bounds.getSouth()},${bounds.getEast()},${bounds.getNorth()}`;
-      onBbox(bbox);
+      setBbox(bbox);
     };
 
     if (isLoaded) {
@@ -28,13 +29,31 @@ function BboxTracker({ onBbox }: { onBbox: (bbox: string) => void }) {
       map.off("moveend", updateBbox);
       map.off("load", updateBbox);
     };
-  }, [map, isLoaded, onBbox]);
+  }, [map, isLoaded, setBbox]);
+
+  return null;
+}
+
+function FlyToHandler() {
+  const { map, isLoaded } = useMap();
+  const pendingFlyTo = useUIStore((s) => s.pendingFlyTo);
+  const setPendingFlyTo = useUIStore((s) => s.setPendingFlyTo);
+
+  useEffect(() => {
+    if (!map || !isLoaded || !pendingFlyTo) return;
+    map.flyTo({
+      center: [pendingFlyTo.lng, pendingFlyTo.lat],
+      zoom: 15,
+      duration: 1000,
+    });
+    setPendingFlyTo(null);
+  }, [map, isLoaded, pendingFlyTo, setPendingFlyTo]);
 
   return null;
 }
 
 export function EntityMap({ children }: { children?: ReactNode }) {
-  const [bbox, setBbox] = useState<string | null>(null);
+  const bbox = useUIStore((s) => s.bbox);
   const typeFilter = useUIStore((s) => s.typeFilter);
   const statusFilter = useUIStore((s) => s.statusFilter);
   const search = useUIStore((s) => s.search);
@@ -63,7 +82,8 @@ export function EntityMap({ children }: { children?: ReactNode }) {
 
   return (
     <Map center={[106.8456, -6.2088]} zoom={11} theme="light" className="w-full h-full">
-      <BboxTracker onBbox={setBbox} />
+      <BboxTracker />
+      <FlyToHandler />
       <MarkerLayer
         entities={filtered}
         onSelect={(e, action) => {

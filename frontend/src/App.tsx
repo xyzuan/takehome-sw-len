@@ -3,6 +3,7 @@ import { queryClient } from "@/libs/query";
 import { Toaster } from "sonner";
 import { EntityMap } from "@/components/map/EntityMap";
 import { BottomNavigation } from "@/components/BottomNavigation";
+import { InAreaCards } from "@/components/InAreaCards";
 import { EntityDialog } from "@/components/EntityDialog";
 import { EntityDetail } from "@/components/EntityDetail";
 import { DeleteConfirm } from "@/components/DeleteConfirm";
@@ -17,8 +18,9 @@ export default function App() {
       <div className="w-screen h-screen relative overflow-hidden">
         <EntityMap />
 
-        {/* Floating bottom-center controls */}
-        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10">
+        {/* Floating bottom-center: in-area cards + controls */}
+        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2 max-w-[90vw]">
+          <InAreaCards />
           <BottomNavigation />
         </div>
 
