@@ -34,7 +34,7 @@ export function MarkerLayer({ entities, onSelect }: MarkerLayerProps) {
             onClick={() => onSelect(entity)}
           >
             <MarkerContent>
-              <div className={`p-1 rounded-full bg-background shadow-md cursor-pointer hover:scale-110 transition-transform ${statusRing[entity.status] ?? ""}`}>
+              <div className={`p-1 rounded-full bg-background shadow-md cursor-pointer hover:scale-110 transition-transform animate-fade-in ${statusRing[entity.status] ?? ""}`}>
                 <Icon className={`w-5 h-5 ${style.color}`} />
               </div>
             </MarkerContent>

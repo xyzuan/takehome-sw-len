@@ -13,30 +13,29 @@ function BboxTracker() {
   useEffect(() => {
     if (!map) return;
 
-    let timer: ReturnType<typeof setTimeout> | null = null;
-
     const computeBbox = () => {
       const bounds = map.getBounds();
       return `${bounds.getWest()},${bounds.getSouth()},${bounds.getEast()},${bounds.getNorth()}`;
     };
 
-    const debouncedUpdate = () => {
+    const updateBbox = () => {
       if (useUIStore.getState().selectedEntityId) return;
-      if (timer) clearTimeout(timer);
-      timer = setTimeout(() => {
-        setBbox(computeBbox());
-      }, 300);
+      setBbox(computeBbox());
     };
 
     if (isLoaded) {
       setBbox(computeBbox());
     }
 
-    map.on("moveend", debouncedUpdate);
+    // dragend fires once when the user releases the drag — no debounce needed.
+    // zoomend fires once when a zoom animation completes.
+    // Both give a GMaps-like "fetch on release" feel.
+    map.on("dragend", updateBbox);
+    map.on("zoomend", updateBbox);
 
     return () => {
-      if (timer) clearTimeout(timer);
-      map.off("moveend", debouncedUpdate);
+      map.off("dragend", updateBbox);
+      map.off("zoomend", updateBbox);
     };
   }, [map, isLoaded, setBbox]);
 
