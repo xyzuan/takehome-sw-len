@@ -71,10 +71,17 @@ volume mount for fast iteration.
 | Concern         | Choice                              | Rationale |
 |-----------------|-------------------------------------|----------|
 | Router          | Go + Gin                            | JSON binding, middleware, struct-tag validation integration |
-| ORM             | GORM (`gorm.io/gorm` + `gorm.io/driver/postgres`) | AutoMigrate, CRUD, hooks; PostGIS via custom `Point` type |
+| ORM             | GORM (`gorm.io/gorm` + `gorm.io/driver/postgres`) | CRUD, hooks; PostGIS via custom `Point` type. Schema managed by explicit SQL migrations (NOT AutoMigrate) |
 | Validation      | go-playground/validator             | Declarative struct-tag validation (serves PRD's backend-validation requirement) |
 | Spatial type    | Custom `Point` type (lat, lng)      | Implements `GormValuerInterface` → `ST_SetSRID(ST_MakePoint(lng,lat),4326)` as geography; `Scanner` reads EWKB/EWKT back |
 | Database        | PostgreSQL + PostGIS                | `geography(Point, 4326)` storage; `ST_Distance`/`ST_DWithin` for stretch spatial queries |
+
+**Migrations — explicit SQL, NOT GORM AutoMigrate.** Schema changes live as
+versioned SQL files in `backend/migrations/` (e.g. `0001_init.up.sql` /
+`0001_init.down.sql`). On startup the backend runs pending up-migrations in
+order and tracks applied versions in a `schema_migrations` table (a tiny
+embedded runner, or `golang-migrate` if available). GORM is used for queries
+and CRUD only — it does not create or alter tables.
 
 ## 4. Data Model
 
@@ -469,12 +476,12 @@ takehome-test/
 │   │   └── server/main.go
 │   ├── internal/
 │   │   ├── config/
-│   │   ├── db/          # GORM init, AutoMigrate, Point type
+│   │   ├── db/          # GORM init, Point type
 │   │   ├── models/      # Entity struct + validation tags
 │   │   ├── handlers/    # Gin handlers
 │   │   ├── services/    # business logic
 │   │   └── validation/  # custom validators
-│   └── migrations/      # (if needed beyond AutoMigrate)
+│   └── migrations/      # explicit SQL migration files (run in order on startup)
 └── frontend/
     ├── Dockerfile
     ├── nginx.conf
