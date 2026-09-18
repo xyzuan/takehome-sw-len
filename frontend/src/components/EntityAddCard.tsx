@@ -10,6 +10,7 @@ export function EntityAddCard() {
   const handleBack = () => {
     useUIStore.getState().setPickMode(false);
     useUIStore.getState().setDraftLatLng(null);
+    useUIStore.getState().setDraftEntity(null);
     setActiveOverlay("none");
   };
 

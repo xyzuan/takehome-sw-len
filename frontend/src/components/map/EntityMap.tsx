@@ -5,6 +5,7 @@ import { MarkerLayer } from "./MarkerLayer";
 import { PickMode } from "./PickMode";
 import { useMapEntities } from "@/features/entities/hooks";
 import { useUIStore } from "@/store/ui";
+import type { Entity } from "@/interface/entity.interface";
 
 function BboxTracker() {
   const { map, isLoaded } = useMap();
@@ -319,13 +320,13 @@ export function EntityMap({ children }: { children?: ReactNode }) {
   );
 
   const filtered = useMemo(() => {
-    if (!entities) return [];
-    let result = entities;
+    const baseEntities = entities ?? [];
+    let result: Entity[] = baseEntities;
     if (selectedEntityId) {
-      result = entities.filter((e) => e.id === selectedEntityId);
+      result = baseEntities.filter((e) => e.id === selectedEntityId);
     } else if (search) {
       const q = search.toLowerCase();
-      result = entities.filter((e) => e.name.toLowerCase().includes(q));
+      result = baseEntities.filter((e) => e.name.toLowerCase().includes(q));
     }
     // Override selected entity with draft (live type/status/position updates during edit)
     if (selectedEntityId) {
@@ -333,10 +334,13 @@ export function EntityMap({ children }: { children?: ReactNode }) {
         if (e.id !== selectedEntityId) return e;
         let merged = { ...e };
         if (draftEntity) merged = { ...merged, ...draftEntity };
-        // draftLatLng covers the render gap before draftEntity updates
         if (draftLatLng) merged = { ...merged, lat: draftLatLng.lat, lng: draftLatLng.lng };
         return merged;
       });
+    }
+    // Add draft marker for create mode (not in API data yet)
+    if (!selectedEntityId && draftEntity && draftEntity.id === "__draft__" && draftLatLng) {
+      result = [...result, draftEntity as Entity];
     }
     return result;
   }, [entities, search, selectedEntityId, draftEntity, draftLatLng]);

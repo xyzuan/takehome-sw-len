@@ -71,7 +71,7 @@ export function EntityForm({ entity, onDone }: EntityFormProps) {
   const device_id = watch("device_id");
   const description = watch("description");
 
-  // Sync draft entity for live marker updates during edit
+  // Sync draft entity for live marker updates during edit and create
   useEffect(() => {
     if (isEdit && entity) {
       useUIStore.getState().setDraftEntity({
@@ -83,6 +83,20 @@ export function EntityForm({ entity, onDone }: EntityFormProps) {
         description: description || null,
         lat,
         lng,
+      });
+    } else if (!isEdit) {
+      useUIStore.getState().setDraftEntity({
+        id: "__draft__",
+        device_id,
+        name: name || "New Entity",
+        type,
+        status,
+        description: description || null,
+        lat,
+        lng,
+        attributes: null,
+        created_at: "",
+        updated_at: "",
       });
     }
   }, [isEdit, entity, device_id, name, type, status, description, lat, lng]);
@@ -96,6 +110,7 @@ export function EntityForm({ entity, onDone }: EntityFormProps) {
         useUIStore.getState().setPendingFlyTo({ lat: values.lat, lng: values.lng });
       } else {
         await createMut.mutateAsync(values);
+        useUIStore.getState().setDraftEntity(null);
       }
       onDone();
     } catch {
