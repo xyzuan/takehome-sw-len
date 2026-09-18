@@ -69,12 +69,15 @@ function MapFocusHandler() {
   const selectedEntityId = useUIStore((s) => s.selectedEntityId);
   const pendingFlyTo = useUIStore((s) => s.pendingFlyTo);
   const pickMode = useUIStore((s) => s.pickMode);
+  const activeOverlay = useUIStore((s) => s.activeOverlay);
 
   const prevSelectedRef = useRef<string | null>(null);
   const prevPickModeRef = useRef(false);
+  const prevOverlayRef = useRef<string>("none");
   const rafRef = useRef<number | null>(null);
   const focusSessionRef = useRef(0);
   const focusedEntityPosRef = useRef<{ lat: number; lng: number } | null>(null);
+  const repickedRef = useRef(false);
 
   const stopRotation = () => {
     if (rafRef.current !== null) {
@@ -197,8 +200,6 @@ function MapFocusHandler() {
 
     // RE-PICK PICK: same entity, new flyTo target → re-focus with 3D + rotation
     if (prev === now && now !== null && pendingFlyTo) {
-      focusedEntityPosRef.current = { lat: pendingFlyTo.lat, lng: pendingFlyTo.lng };
-
       stopRotation();
       focusSessionRef.current++;
       const session = focusSessionRef.current;
@@ -218,6 +219,7 @@ function MapFocusHandler() {
         startRotation(session);
       });
 
+      repickedRef.current = true;
       useUIStore.getState().setPendingFlyTo(null);
     }
 
@@ -243,9 +245,37 @@ function MapFocusHandler() {
       }
     }
 
+    // EDIT CANCEL: activeOverlay changed from edit to none/detail, repicked but cancelled
+    // → fly back to original position, re-focus with rotation
+    if (prevOverlayRef.current === "edit" && activeOverlay !== "edit" && now !== null && repickedRef.current) {
+      const origPos = focusedEntityPosRef.current;
+      repickedRef.current = false;
+      if (origPos) {
+        stopRotation();
+        focusSessionRef.current++;
+        const session = focusSessionRef.current;
+
+        disableInteractions(map);
+
+        map.flyTo({
+          center: [origPos.lng, origPos.lat],
+          zoom: 16,
+          pitch: 60,
+          bearing: 0,
+          duration: 1500,
+        });
+
+        map.once("moveend", () => {
+          if (focusSessionRef.current !== session) return;
+          startRotation(session);
+        });
+      }
+    }
+
     prevSelectedRef.current = now;
     prevPickModeRef.current = pickMode;
-  }, [selectedEntityId, pendingFlyTo, pickMode, map, isLoaded]);
+    prevOverlayRef.current = activeOverlay;
+  }, [selectedEntityId, pendingFlyTo, pickMode, activeOverlay, map, isLoaded]);
 
   // Cleanup on unmount
   useEffect(() => {
