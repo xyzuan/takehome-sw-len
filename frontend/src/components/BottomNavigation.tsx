@@ -106,7 +106,8 @@ export function BottomNavigation() {
         onClick={() => {
           if (!pickMode) {
             useUIStore.getState().setSelectedEntityId(null);
-            useUIStore.getState().setActiveOverlay("none");
+            useUIStore.getState().setDraftLatLng(null);
+            useUIStore.getState().setActiveOverlay("add");
           }
           setPickMode(!pickMode);
         }}
