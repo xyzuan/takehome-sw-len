@@ -100,56 +100,108 @@ A GiST index on the `location` column supports spatial queries (stretch).
 ## 5. REST API & Contract
 
 All endpoints are prefixed with `/api`. All responses are JSON and use a
-single unified envelope (see below). The `location` column is flattened to
-`lat` and `lng` in request and response bodies for frontend friendliness.
+single flat envelope (see below). The `location` column is flattened to `lat`
+and `lng` in request and response bodies for frontend friendliness.
 
 ### Endpoints
 
-| Method | Path                 | Purpose | Success response |
-|--------|----------------------|---------|------------------|
-| `GET`    | `/api/entities`      | list all; optional `?type=` and `?status=` filters | 200 + `data: Entity[]` |
-| `GET`    | `/api/entities/:id`  | get one (detail view) | 200 + `data: Entity` |
-| `POST`   | `/api/entities`      | create | 201 + `data: Entity` |
-| `PUT`    | `/api/entities/:id`  | full replace | 200 + `data: Entity` |
-| `DELETE` | `/api/entities/:id`  | delete | 204 (no body) |
+Two list endpoints serve two different consumers: the map needs entities in
+the current viewport (PostGIS spatial query, no pagination), while the table
+needs paginated rows.
 
-### Response envelope (meta + data + errors)
+| Method | Path | Purpose | Success response |
+|--------|------|---------|------------------|
+| `GET` | `/api/entities/map?bbox=minLng,minLat,maxLng,maxLat` | entities within viewport (PostGIS `ST_Within` / `ST_MakeEnvelope`); optional `&type=` and `&status=` filters | 200, `data: Entity[]`, no `meta` |
+| `GET` | `/api/entities?page=1&per_page=20` | paginated list for table / infinite query; optional `&type=` and `&status=` filters | 200, `data: Entity[]`, `meta: PaginationMeta` |
+| `GET` | `/api/entities/:id` | get one (detail view) | 200, `data: Entity` |
+| `POST` | `/api/entities` | create | 201, `data: Entity` |
+| `PUT` | `/api/entities/:id` | full replace | 200, `data: Entity` |
+| `DELETE` | `/api/entities/:id` | delete | 204 (no body) |
 
-Every response (except `204 No Content`) uses the same envelope. `meta`
-always carries success status, HTTP code, and a human-readable message. `data`
-holds the payload on success (single object or array). `errors` holds
-field-level messages and is present only when `success` is `false` and the
-error is field-scoped (validation, conflict).
+### Response envelope (flat)
 
-**Success:**
-```json
+Every response (except `204 No Content`) uses the same flat envelope. Success
+is inferred from `status_code` (2xx = success). `data` holds the payload on
+success (single object or array). `meta` is present only on paginated list
+responses. `errors` holds field-level messages and is present only on
+field-scoped failures (validation, conflict).
+
+```typescript
 {
-  "meta": { "success": true, "code": 200, "message": "OK" },
-  "data": { "id": "550e8400-...", "device_id": "VAN-03-NORTH", "name": "Delivery Van 03", "type": "vehicle", "status": "active", "description": "Refrigerated van, north route", "lat": -6.2088, "lng": 106.8456, "attributes": { "plate": "B 1234 X" }, "created_at": "2026-09-18T12:00:00Z", "updated_at": "2026-09-18T12:30:00Z" }
+  status_code: number;             // HTTP status (2xx = success, inferred)
+  message: string;                 // human-readable summary
+  data: T | null;                  // Entity | Entity[] | null
+  meta?: PaginationMeta;           // ONLY on paginated list responses
+  errors?: Record<string, string>; // ONLY on validation/conflict failures
 }
 ```
 
-For list endpoints `data` is an array (`Entity[]`); for single-resource
-endpoints `data` is one object.
+### PaginationMeta
 
-**Error:**
+Present only on `GET /api/entities` (paginated) responses.
+
+```typescript
+export interface PaginationMeta {
+  current_page: number;
+  last_page: number;
+  per_page: number;
+  total: number;
+}
+```
+
+### Examples
+
+**Map endpoint** (`GET /api/entities/map?bbox=...`) — no `meta`:
 ```json
 {
-  "meta": { "success": false, "code": 422, "message": "validation failed" },
-  "data": null,
-  "errors": {
-    "name": "name is required",
-    "lat": "lat must be between -90 and 90"
+  "status_code": 200,
+  "message": "OK",
+  "data": [
+    {
+      "id": "550e8400-e29b-41d4-a716-446655440000",
+      "device_id": "VAN-03-NORTH",
+      "name": "Delivery Van 03",
+      "type": "vehicle",
+      "status": "active",
+      "description": "Refrigerated van, north route",
+      "lat": -6.2088,
+      "lng": 106.8456,
+      "attributes": { "plate": "B 1234 X" },
+      "created_at": "2026-09-18T12:00:00Z",
+      "updated_at": "2026-09-18T12:30:00Z"
+    }
+  ]
+}
+```
+
+**Table endpoint** (`GET /api/entities?page=1&per_page=20`) — with `meta`:
+```json
+{
+  "status_code": 200,
+  "message": "OK",
+  "data": [ /* Entity[] */ ],
+  "meta": { "current_page": 1, "last_page": 3, "per_page": 20, "total": 57 }
+}
+```
+
+**Single resource** (`GET /api/entities/:id`):
+```json
+{
+  "status_code": 200,
+  "message": "OK",
+  "data": {
+    "id": "550e8400-e29b-41d4-a716-446655440000",
+    "device_id": "VAN-03-NORTH",
+    "name": "Delivery Van 03",
+    "type": "vehicle",
+    "status": "active",
+    "description": "Refrigerated van, north route",
+    "lat": -6.2088,
+    "lng": 106.8456,
+    "attributes": { "plate": "B 1234 X" },
+    "created_at": "2026-09-18T12:00:00Z",
+    "updated_at": "2026-09-18T12:30:00Z"
   }
-}
-```
-
-Non-field errors (not found, malformed JSON, server fault) return the same
-envelope with `data: null` and omit `errors`:
-```json
-{
-  "meta": { "success": false, "code": 404, "message": "entity not found" },
-  "data": null
 }
 ```
 
@@ -176,16 +228,35 @@ Create/update requests omit `id`, `created_at`, and `updated_at`
 
 ### Error codes
 
-| HTTP | `code` | `message`              | When                          | Has `errors`? |
-|------|--------|------------------------|-------------------------------|---------------|
-| 200  | 200    | `OK`                   | GET / PUT success             | no |
-| 201  | 201    | `Created`              | POST success                  | no |
-| 204  | 204    | `No Content`           | DELETE success (no body)      | n/a (no body) |
-| 400  | 400    | `Bad Request`          | malformed JSON                | no |
-| 404  | 404    | `entity not found`     | `:id` not found               | no |
-| 409  | 409    | `conflict`             | duplicate `device_id`         | yes — `{ "device_id": "..." }` |
-| 422  | 422    | `validation failed`    | invalid input                 | yes — field messages |
-| 500  | 500    | `internal server error`| server fault                  | no |
+| HTTP | `status_code` | `message` | Has `errors`? | Has `meta`? |
+|------|---------------|-----------|----------------|-------------|
+| 200 | 200 | `OK` | no | only on `/api/entities` (paginated) |
+| 201 | 201 | `Created` | no | no |
+| 204 | 204 | `No Content` | n/a (no body) | n/a (no body) |
+| 400 | 400 | `Bad Request` | no | no |
+| 404 | 404 | `entity not found` | no | no |
+| 409 | 409 | `conflict` | yes — `{ "device_id": "device_id already exists" }` | no |
+| 422 | 422 | `validation failed` | yes — field messages | no |
+| 500 | 500 | `internal server error` | no | no |
+
+**422 example:**
+```json
+{
+  "status_code": 422,
+  "message": "validation failed",
+  "data": null,
+  "errors": { "name": "name is required", "lat": "lat must be between -90 and 90" }
+}
+```
+
+**404 example** (no `errors`, no `meta`):
+```json
+{
+  "status_code": 404,
+  "message": "entity not found",
+  "data": null
+}
+```
 
 ### Frontend TypeScript contract
 
@@ -225,44 +296,47 @@ export interface EntityInput {
   attributes?: Record<string, unknown>;
 }
 
-// Unified response envelope
-export interface ResponseMeta {
-  success: boolean;
-  code: number;    // HTTP status, mirrors the HTTP status line
-  message: string; // human-readable summary
+// Pagination meta (Laravel-style), only on paginated list responses
+export interface PaginationMeta {
+  current_page: number;
+  last_page: number;
+  per_page: number;
+  total: number;
 }
 
+// Flat response envelope
 export interface ApiResponse<T> {
-  meta: ResponseMeta;
+  status_code: number;
+  message: string;
   data: T | null;
-  errors?: Record<string, string>; // present only on field-scoped failures
+  meta?: PaginationMeta;
+  errors?: Record<string, string>;
 }
 
 // Convenience aliases for each endpoint
-export type EntityListResponse = ApiResponse<Entity[]>;
-export type EntityResponse = ApiResponse<Entity>;
-export type EmptyResponse = ApiResponse<null>;
-```
+export type EntityMapResponse = ApiResponse<Entity[]>;   // /api/entities/map
+export type EntityListResponse = ApiResponse<Entity[]>;   // /api/entities (paginated)
+export type EntityResponse = ApiResponse<Entity>;        // single resource
 
-The API client (`frontend/src/lib/api/client.ts`) parses `meta.success`:
-on `true` it returns `data`; on `false` it throws a typed `ApiError` carrying
-`meta` and `errors`, which TanStack Query mutation hooks surface as inline
-form errors (for 422/409) or toasts (for 404/500).
-
-```typescript
+// Typed error thrown by the API client on non-2xx responses
 export class ApiError extends Error {
-  constructor(public meta: ResponseMeta, public errors?: Record<string, string>) {
-    super(meta.message);
+  constructor(
+    public status_code: number,
+    public message: string,
+    public errors?: Record<string, string>,
+  ) {
+    super(message);
     this.name = "ApiError";
   }
 }
 ```
 
-### Stretch (only if time remains)
-
-`GET /api/entities?near=lat,lng&radius=km` — returns entities within `radius`
-kilometers using PostGIS `ST_DWithin` on the geography column. Showcases
-PostGIS competence without being on the critical path.
+The API client (`frontend/src/lib/api/client.ts`) parses `status_code`: on
+2xx it returns `data`; otherwise it throws a typed `ApiError` carrying
+`status_code`, `message`, and `errors`. TanStack Query mutation hooks surface
+`errors` as inline form errors (for 422/409) or as toasts (for 404/500). The
+map endpoint feeds `EntityMapResponse` into the marker layer; the table
+endpoint uses `EntityListResponse` + `meta` for infinite-query pagination.
 
 ## 6. Validation
 
