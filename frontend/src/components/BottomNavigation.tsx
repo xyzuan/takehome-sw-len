@@ -159,7 +159,7 @@ export function BottomNavigation() {
   }, [darkMode]);
 
   return (
-    <div className="flex items-center gap-2 bg-background/90 backdrop-blur border rounded-lg shadow-md px-3 py-2 w-full">
+    <div className="flex items-center gap-2 px-3 py-2 w-full">
       <Input
         placeholder="Search by name..."
         value={search}
