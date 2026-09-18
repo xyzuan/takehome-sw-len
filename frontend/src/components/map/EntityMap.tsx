@@ -67,6 +67,7 @@ function enableInteractions(map: MaplibreMap) {
 function MapFocusHandler() {
   const { map, isLoaded } = useMap();
   const selectedEntityId = useUIStore((s) => s.selectedEntityId);
+  const pendingFlyTo = useUIStore((s) => s.pendingFlyTo);
 
   const prevSelectedRef = useRef<string | null>(null);
   const rafRef = useRef<number | null>(null);
@@ -101,8 +102,8 @@ function MapFocusHandler() {
     // FOCUS: null -> non-null
     if (prev === null && now !== null) {
       const state = useUIStore.getState();
-      const pendingFlyTo = state.pendingFlyTo;
-      if (!pendingFlyTo) {
+      const flyTo = state.pendingFlyTo;
+      if (!flyTo) {
         prevSelectedRef.current = now;
         return;
       }
@@ -119,7 +120,7 @@ function MapFocusHandler() {
       const session = ++focusSessionRef.current;
 
       map.flyTo({
-        center: [pendingFlyTo.lng, pendingFlyTo.lat],
+        center: [flyTo.lng, flyTo.lat],
         zoom: 16,
         pitch: 60,
         bearing: 0,
@@ -160,12 +161,34 @@ function MapFocusHandler() {
     // SWITCH: non-null -> different non-null
     if (prev !== null && now !== null && prev !== now) {
       const state = useUIStore.getState();
-      const pendingFlyTo = state.pendingFlyTo;
-      if (!pendingFlyTo) {
+      const flyTo = state.pendingFlyTo;
+      if (!flyTo) {
         prevSelectedRef.current = now;
         return;
       }
 
+      stopRotation();
+      focusSessionRef.current++;
+      const session = focusSessionRef.current;
+
+      map.flyTo({
+        center: [flyTo.lng, flyTo.lat],
+        zoom: 16,
+        pitch: 60,
+        bearing: 0,
+        duration: 1500,
+      });
+
+      map.once("moveend", () => {
+        if (focusSessionRef.current !== session) return;
+        startRotation(session);
+      });
+
+      state.setPendingFlyTo(null);
+    }
+
+    // RE-PICK: same entity, new flyTo target (re-pick location in edit mode)
+    if (prev === now && now !== null && pendingFlyTo) {
       stopRotation();
       focusSessionRef.current++;
       const session = focusSessionRef.current;
@@ -183,11 +206,11 @@ function MapFocusHandler() {
         startRotation(session);
       });
 
-      state.setPendingFlyTo(null);
+      useUIStore.getState().setPendingFlyTo(null);
     }
 
     prevSelectedRef.current = now;
-  }, [selectedEntityId, map, isLoaded]);
+  }, [selectedEntityId, pendingFlyTo, map, isLoaded]);
 
   // Cleanup on unmount
   useEffect(() => {
