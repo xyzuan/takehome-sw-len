@@ -181,8 +181,8 @@ export function EntityForm({ entity, onDone }: EntityFormProps) {
         {fieldErrors.description && <p className="text-xs text-destructive mt-0.5">{fieldErrors.description}</p>}
       </div>
 
-      {/* Row 4: Long | Lat | Repick (or just Long | Lat for add) */}
-      <div className={isEdit ? "grid grid-cols-3 gap-3" : "grid grid-cols-2 gap-3"}>
+      {/* Row 4: Long | Lat | Repick */}
+      <div className="grid grid-cols-3 gap-3">
         <div>
           <Label className="text-xs">Longitude</Label>
           <Input type="number" step="any" value={lng} readOnly className="h-8 text-sm bg-muted" />
@@ -191,22 +191,20 @@ export function EntityForm({ entity, onDone }: EntityFormProps) {
           <Label className="text-xs">Latitude</Label>
           <Input type="number" step="any" value={lat} readOnly className="h-8 text-sm bg-muted" />
         </div>
-        {isEdit && (
-          <div className="flex items-end">
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              className="h-8 w-full text-xs"
-              onClick={() => {
-                useUIStore.getState().setPickMode(true);
-                useUIStore.getState().setActiveOverlay("edit");
-              }}
-            >
-              Re-pick
-            </Button>
-          </div>
-        )}
+        <div className="flex items-end">
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            className="h-8 w-full text-xs"
+            onClick={() => {
+              useUIStore.getState().setPickMode(true);
+              useUIStore.getState().setActiveOverlay(isEdit ? "edit" : "add");
+            }}
+          >
+            Re-pick
+          </Button>
+        </div>
       </div>
 
       <Button type="submit" disabled={isSubmitting} className="w-full h-8 text-sm">

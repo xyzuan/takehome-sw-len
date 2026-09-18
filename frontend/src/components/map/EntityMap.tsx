@@ -239,18 +239,105 @@ function MapFocusHandler() {
       map.easeTo({ pitch: 0, bearing: 0 }, { duration: 800 });
     }
 
-    // RE-PICK CANCEL: pickMode turned off, no new coords → fly back to original at 2D
-    if (!pickMode && prevPickModeRef.current && now !== null && !pendingFlyTo) {
-      const origPos = focusedEntityPosRef.current;
-      if (origPos) {
+    // ADD PICK: no entity selected, new flyTo target (add mode location pick)
+    if (prev === null && now === null && pendingFlyTo) {
+      const state = useUIStore.getState();
+      focusedEntityPosRef.current = { lat: pendingFlyTo.lat, lng: pendingFlyTo.lng };
+
+      state.setSavedMapView({
+        center: [map.getCenter().lng, map.getCenter().lat],
+        zoom: map.getZoom(),
+        pitch: map.getPitch(),
+        bearing: map.getBearing(),
+      });
+
+      disableInteractions(map);
+      const session = ++focusSessionRef.current;
+
+      map.flyTo({
+        center: [pendingFlyTo.lng, pendingFlyTo.lat],
+        zoom: 16,
+        pitch: 60,
+        bearing: 0,
+        duration: 1500,
+      });
+
+      map.once("moveend", () => {
+        if (focusSessionRef.current !== session) return;
+        startRotation(session);
+      });
+
+      state.setPendingFlyTo(null);
+    }
+
+    // ADD RE-PICK ENTER: pickMode on, no entity → unlock, go 2D
+    if (pickMode && !prevPickModeRef.current && now === null) {
+      stopRotation();
+      focusSessionRef.current++;
+      enableInteractions(map);
+      map.easeTo({ pitch: 0, bearing: 0 }, { duration: 800 });
+    }
+
+    // ADD RE-PICK PICK: pickMode off, no entity, new flyTo → re-focus 3D + rotation
+    if (!pickMode && prevPickModeRef.current && now === null && pendingFlyTo) {
+      focusedEntityPosRef.current = { lat: pendingFlyTo.lat, lng: pendingFlyTo.lng };
+      stopRotation();
+      focusSessionRef.current++;
+      const session = focusSessionRef.current;
+
+      disableInteractions(map);
+
+      map.flyTo({
+        center: [pendingFlyTo.lng, pendingFlyTo.lat],
+        zoom: 16,
+        pitch: 60,
+        bearing: 0,
+        duration: 1500,
+      });
+
+      map.once("moveend", () => {
+        if (focusSessionRef.current !== session) return;
+        startRotation(session);
+      });
+
+      useUIStore.getState().setPendingFlyTo(null);
+    }
+
+    // ADD RE-PICK CANCEL: pickMode off, no entity, no flyTo → fly back to draft pos at 2D
+    if (!pickMode && prevPickModeRef.current && now === null && !pendingFlyTo) {
+      const draftPos = focusedEntityPosRef.current;
+      if (draftPos) {
         map.flyTo({
-          center: [origPos.lng, origPos.lat],
+          center: [draftPos.lng, draftPos.lat],
           zoom: 16,
           pitch: 0,
           bearing: 0,
           duration: 1500,
         });
       }
+    }
+
+    // ADD CANCEL: overlay left add, no entity → restore saved view
+    if (prevOverlayRef.current === "add" && activeOverlay !== "add" && now === null) {
+      const state = useUIStore.getState();
+      const savedMapView = state.savedMapView;
+
+      stopRotation();
+      focusSessionRef.current++;
+      map.stop();
+      enableInteractions(map);
+
+      if (savedMapView) {
+        map.flyTo({
+          center: savedMapView.center,
+          zoom: savedMapView.zoom,
+          pitch: 0,
+          bearing: 0,
+          duration: 1500,
+        });
+        state.setSavedMapView(null);
+      }
+      focusedEntityPosRef.current = null;
     }
 
     // EDIT CANCEL: activeOverlay changed from edit to none/detail, repicked but cancelled
