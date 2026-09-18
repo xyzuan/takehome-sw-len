@@ -68,10 +68,13 @@ function MapFocusHandler() {
   const { map, isLoaded } = useMap();
   const selectedEntityId = useUIStore((s) => s.selectedEntityId);
   const pendingFlyTo = useUIStore((s) => s.pendingFlyTo);
+  const pickMode = useUIStore((s) => s.pickMode);
 
   const prevSelectedRef = useRef<string | null>(null);
+  const prevPickModeRef = useRef(false);
   const rafRef = useRef<number | null>(null);
   const focusSessionRef = useRef(0);
+  const focusedEntityPosRef = useRef<{ lat: number; lng: number } | null>(null);
 
   const stopRotation = () => {
     if (rafRef.current !== null) {
@@ -107,6 +110,8 @@ function MapFocusHandler() {
         prevSelectedRef.current = now;
         return;
       }
+
+      focusedEntityPosRef.current = { lat: flyTo.lat, lng: flyTo.lng };
 
       state.setSavedMapView({
         center: [map.getCenter().lng, map.getCenter().lat],
@@ -156,6 +161,7 @@ function MapFocusHandler() {
         });
         state.setSavedMapView(null);
       }
+      focusedEntityPosRef.current = null;
     }
 
     // SWITCH: non-null -> different non-null
@@ -166,6 +172,8 @@ function MapFocusHandler() {
         prevSelectedRef.current = now;
         return;
       }
+
+      focusedEntityPosRef.current = { lat: flyTo.lat, lng: flyTo.lng };
 
       stopRotation();
       focusSessionRef.current++;
@@ -187,11 +195,15 @@ function MapFocusHandler() {
       state.setPendingFlyTo(null);
     }
 
-    // RE-PICK: same entity, new flyTo target (re-pick location in edit mode)
+    // RE-PICK PICK: same entity, new flyTo target → re-focus with 3D + rotation
     if (prev === now && now !== null && pendingFlyTo) {
+      focusedEntityPosRef.current = { lat: pendingFlyTo.lat, lng: pendingFlyTo.lng };
+
       stopRotation();
       focusSessionRef.current++;
       const session = focusSessionRef.current;
+
+      disableInteractions(map);
 
       map.flyTo({
         center: [pendingFlyTo.lng, pendingFlyTo.lat],
@@ -209,8 +221,31 @@ function MapFocusHandler() {
       useUIStore.getState().setPendingFlyTo(null);
     }
 
+    // RE-PICK ENTER: pickMode just turned on → unlock map, go 2D
+    if (pickMode && !prevPickModeRef.current && now !== null) {
+      stopRotation();
+      focusSessionRef.current++;
+      enableInteractions(map);
+      map.easeTo({ pitch: 0, bearing: 0 }, { duration: 800 });
+    }
+
+    // RE-PICK CANCEL: pickMode turned off, no new coords → fly back to original at 2D
+    if (!pickMode && prevPickModeRef.current && now !== null && !pendingFlyTo) {
+      const origPos = focusedEntityPosRef.current;
+      if (origPos) {
+        map.flyTo({
+          center: [origPos.lng, origPos.lat],
+          zoom: 16,
+          pitch: 0,
+          bearing: 0,
+          duration: 1500,
+        });
+      }
+    }
+
     prevSelectedRef.current = now;
-  }, [selectedEntityId, pendingFlyTo, map, isLoaded]);
+    prevPickModeRef.current = pickMode;
+  }, [selectedEntityId, pendingFlyTo, pickMode, map, isLoaded]);
 
   // Cleanup on unmount
   useEffect(() => {
