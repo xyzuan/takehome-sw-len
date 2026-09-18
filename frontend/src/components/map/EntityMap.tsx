@@ -203,6 +203,7 @@ export function EntityMap({ children }: { children?: ReactNode }) {
   const statusFilter = useUIStore((s) => s.statusFilter);
   const search = useUIStore((s) => s.search);
   const selectedEntityId = useUIStore((s) => s.selectedEntityId);
+  const darkMode = useUIStore((s) => s.darkMode);
   const { data: entities } = useMapEntities(bbox, typeFilter, statusFilter);
   const pickMode = useUIStore((s) => s.pickMode);
   const setDraftLatLng = useUIStore((s) => s.setDraftLatLng);
@@ -228,7 +229,7 @@ export function EntityMap({ children }: { children?: ReactNode }) {
   }, [entities, search, selectedEntityId]);
 
   return (
-    <Map center={[106.8456, -6.2088]} zoom={11} theme="light" className="w-full h-full">
+    <Map center={[106.8456, -6.2088]} zoom={11} theme={darkMode ? "dark" : "light"} className="w-full h-full">
       <BboxTracker />
       <MapFocusHandler />
       <MarkerLayer
