@@ -70,6 +70,7 @@ function MapFocusHandler() {
   const pendingFlyTo = useUIStore((s) => s.pendingFlyTo);
   const pickMode = useUIStore((s) => s.pickMode);
   const activeOverlay = useUIStore((s) => s.activeOverlay);
+  const committedPos = useUIStore((s) => s.committedPos);
 
   const prevSelectedRef = useRef<string | null>(null);
   const prevPickModeRef = useRef(false);
@@ -200,6 +201,12 @@ function MapFocusHandler() {
 
     // RE-PICK PICK: same entity, new flyTo target → re-focus with 3D + rotation
     if (prev === now && now !== null && pendingFlyTo) {
+      // If committedPos is set, this is from a form save — update original position
+      if (committedPos) {
+        focusedEntityPosRef.current = { lat: committedPos.lat, lng: committedPos.lng };
+        useUIStore.getState().setCommittedPos(null);
+      }
+
       stopRotation();
       focusSessionRef.current++;
       const session = focusSessionRef.current;
@@ -275,7 +282,7 @@ function MapFocusHandler() {
     prevSelectedRef.current = now;
     prevPickModeRef.current = pickMode;
     prevOverlayRef.current = activeOverlay;
-  }, [selectedEntityId, pendingFlyTo, pickMode, activeOverlay, map, isLoaded]);
+  }, [selectedEntityId, pendingFlyTo, pickMode, activeOverlay, committedPos, map, isLoaded]);
 
   // Cleanup on unmount
   useEffect(() => {

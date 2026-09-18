@@ -21,6 +21,7 @@ interface UIState {
   pendingFlyTo: { lat: number; lng: number } | null;
   savedMapView: MapView | null;
   darkMode: boolean;
+  committedPos: { lat: number; lng: number } | null;
 
   setPickMode: (v: boolean) => void;
   setSelectedEntityId: (id: string | null) => void;
@@ -34,6 +35,7 @@ interface UIState {
   setSavedMapView: (v: MapView | null) => void;
   setDarkMode: (v: boolean) => void;
   toggleDarkMode: () => void;
+  setCommittedPos: (v: { lat: number; lng: number } | null) => void;
   reset: () => void;
 }
 
@@ -49,6 +51,7 @@ export const useUIStore = create<UIState>((set) => ({
   pendingFlyTo: null,
   savedMapView: null,
   darkMode: false,
+  committedPos: null,
 
   setPickMode: (v) => set({ pickMode: v }),
   setSelectedEntityId: (id) => set({ selectedEntityId: id }),
@@ -62,6 +65,7 @@ export const useUIStore = create<UIState>((set) => ({
   setSavedMapView: (v) => set({ savedMapView: v }),
   setDarkMode: (v) => set({ darkMode: v }),
   toggleDarkMode: () => set((s) => ({ darkMode: !s.darkMode })),
+  setCommittedPos: (v) => set({ committedPos: v }),
   reset: () =>
     set({
       pickMode: false,
@@ -75,5 +79,6 @@ export const useUIStore = create<UIState>((set) => ({
       pendingFlyTo: null,
       savedMapView: null,
       darkMode: false,
+      committedPos: null,
     }),
 }));
