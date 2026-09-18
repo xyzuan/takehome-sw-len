@@ -26,7 +26,7 @@ function ExpandableButton({
       onClick={onClick}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
-      className={`h-8 overflow-hidden whitespace-nowrap transition-all duration-300 ease-out ${active ? "ring-2 ring-ring/30" : ""} ${variant === "outline" ? "bg-background/95 backdrop-blur dark:bg-background/95 dark:border-border dark:hover:bg-muted" : ""}`}
+      className={`h-8 overflow-hidden whitespace-nowrap transition-all duration-300 ease-out shadow-md ${active ? "ring-2 ring-ring/30" : ""} ${variant === "outline" ? "bg-background/95 backdrop-blur dark:bg-background/95 dark:border-border dark:hover:bg-muted" : ""}`}
       style={{
         width: hovered ? "auto" : "2rem",
         minWidth: "2rem",
@@ -80,7 +80,7 @@ export function BottomNavigation() {
         placeholder="Search by name..."
         value={search}
         onChange={(e) => setSearch(e.target.value)}
-        className="h-8 flex-1 min-w-0 bg-background/95 backdrop-blur dark:bg-background/95"
+        className="h-8 flex-1 min-w-0 bg-background/95 backdrop-blur dark:bg-background/95 shadow-md"
       />
 
       <ExpandableButton
