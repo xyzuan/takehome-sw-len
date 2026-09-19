@@ -61,7 +61,11 @@ export const MarkerLayer = ({ entities, onSelect }: MarkerLayerProps) => {
                 <span
                   className={`absolute -top-0.5 -right-0.5 w-3 h-3 rounded-full border-2 shadow-sm ${statusDot[entity.status] ?? "bg-gray-400"}`}
                   style={{ borderColor: "white" }}
-                />
+                >
+                  <span
+                    className={`absolute inset-0 rounded-full animate-ping ${statusDot[entity.status] ?? "bg-gray-400"}`}
+                  />
+                </span>
               </div>
             </MarkerContent>
             <MarkerTooltip>
