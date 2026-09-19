@@ -59,10 +59,6 @@ export const useCreateEntity = () => {
       queryClient.invalidateQueries({ queryKey: ["entities"] });
       toast.success("Entity created");
     },
-    onError: (err: unknown) => {
-      const e = err as { status_code?: number; message?: string };
-      toast.error(e?.message ?? "Failed to create entity");
-    },
   });
 };
 
@@ -73,10 +69,6 @@ export const useUpdateEntity = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["entities"] });
       toast.success("Entity updated");
-    },
-    onError: (err: unknown) => {
-      const e = err as { status_code?: number; message?: string };
-      toast.error(e?.message ?? "Failed to update entity");
     },
   });
 };
@@ -89,10 +81,6 @@ export const useDeleteEntity = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["entities"] });
       toast.success("Entity deleted");
-    },
-    onError: (err: unknown) => {
-      const e = err as { status_code?: number; message?: string };
-      toast.error(e?.message ?? "Failed to delete entity");
     },
   });
 };
