@@ -2,7 +2,7 @@ import { useEffect, useRef } from "react";
 import { ArrowLeft, Search } from "lucide-react";
 import { useSearchEntities } from "@/services/entity";
 import { useUIStore } from "@/store/ui";
-import { EntityCardSkeleton } from "@/features/entities/components/EntityCardSkeleton";
+import { SearchListSkeleton } from "@/features/entities/components/SearchListSkeleton";
 import { formatLabel } from "@/constants/labels";
 import { typeStyles, statusColors } from "@/constants/entity";
 import type { Entity } from "@/interfaces/entity";
@@ -69,15 +69,7 @@ export const SearchResults = () => {
       </div>
 
       <div ref={scrollRef} className="max-h-[50vh] overflow-y-auto space-y-2 -mr-2 pr-2">
-        {isLoading && (
-          <>
-            {Array.from({ length: 4 }).map((_, i) => (
-              <div key={i}>
-                <EntityCardSkeleton />
-              </div>
-            ))}
-          </>
-        )}
+        {isLoading && <SearchListSkeleton />}
 
         {!isLoading && allEntities.length === 0 && (
           <div className="py-8 text-center text-sm text-muted-foreground">
