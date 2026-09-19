@@ -1,3 +1,18 @@
+export type TSort = "ASC" | "DESC";
+
+export interface IQueryRequest {
+  search?: string;
+  limit?: number;
+  page?: number;
+  per_page?: number;
+  sort?: TSort;
+  orderBy?: string;
+  type?: string;
+  status?: string;
+  bbox?: string;
+  zoom?: number;
+}
+
 export interface PaginationMeta {
   current_page: number;
   last_page: number;

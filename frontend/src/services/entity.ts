@@ -3,17 +3,16 @@ import { useQuery, useMutation, useInfiniteQuery, keepPreviousData } from "@tans
 import client from "@/libs/axios";
 import { queryClient } from "@/libs/query";
 import { entityKeys } from "@/constants/query-keys";
+import { generateUrlParams } from "@/utils/params";
 import type { Entity, EntityInput } from "@/interfaces/entity";
-import type { ApiResponse, PaginationMeta } from "@/interfaces/api";
+import type { ApiResponse, PaginationMeta, IQueryRequest } from "@/interfaces/api";
 
 export const useMapEntities = (bbox: string | null, type?: string, status?: string) => {
   return useQuery({
     queryKey: entityKeys.map(bbox ?? "", [type, status].filter(Boolean).join(",")),
     queryFn: async () => {
-      const params: Record<string, string> = { bbox: bbox! };
-      if (type) params.type = type;
-      if (status) params.status = status;
-      return client.get("/entities/map", { params }) as unknown as Promise<Entity[]>;
+      const query: IQueryRequest = { bbox: bbox!, type, status };
+      return client.get(`/entities/map${generateUrlParams(query)}`) as unknown as Promise<Entity[]>;
     },
     enabled: !!bbox,
     placeholderData: keepPreviousData,
@@ -24,11 +23,8 @@ export const useSearchEntities = (search: string, type?: string, status?: string
   return useInfiniteQuery({
     queryKey: entityKeys.list(0, 10, [search, type, status].filter(Boolean).join(",")),
     queryFn: async ({ pageParam }) => {
-      const params: Record<string, string> = { page: String(pageParam), per_page: "10" };
-      if (type) params.type = type;
-      if (status) params.status = status;
-      if (search) params.search = search;
-      const res = await axios.get("/api/entities", { params });
+      const query: IQueryRequest = { page: pageParam, per_page: 10, search, type, status };
+      const res = await axios.get(`/api/entities${generateUrlParams(query)}`);
       const body = res.data as ApiResponse<Entity[]>;
       return { data: body.data ?? [], meta: (body.meta ?? null) as PaginationMeta | null };
     },
