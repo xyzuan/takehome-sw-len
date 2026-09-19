@@ -1,17 +1,11 @@
 import { useEffect, useRef } from "react";
-import { ArrowLeft, Search, Car, Cpu, Building, Circle } from "lucide-react";
+import { ArrowLeft, Search } from "lucide-react";
 import { useSearchEntities } from "@/services/entity";
 import { useUIStore } from "@/store/ui";
 import { EntityCardSkeleton } from "@/features/entities/components/EntityCardSkeleton";
 import { formatLabel } from "@/constants/labels";
+import { typeStyles, statusColors } from "@/constants/entity";
 import type { Entity } from "@/interfaces/entity";
-
-const typeStyles: Record<string, { icon: typeof Car; bg: string; text: string }> = {
-  vehicle: { icon: Car, bg: "bg-blue-500", text: "text-white" },
-  iot: { icon: Cpu, bg: "bg-purple-500", text: "text-white" },
-  facility: { icon: Building, bg: "bg-green-500", text: "text-white" },
-  other: { icon: Circle, bg: "bg-gray-500", text: "text-white" },
-};
 
 export const SearchResults = () => {
   const search = useUIStore((s) => s.search);
@@ -111,11 +105,7 @@ export const SearchResults = () => {
               <span className="text-xs px-2 py-0.5 rounded-full bg-muted text-muted-foreground">
                 {formatLabel(entity.type)}
               </span>
-              <span className={`text-xs px-2 py-0.5 rounded-full ${
-                entity.status === "active" ? "bg-green-100 text-green-700" :
-                entity.status === "inactive" ? "bg-gray-100 text-gray-500" :
-                "bg-amber-100 text-amber-700"
-              }`}>
+              <span className={`text-xs px-2 py-0.5 rounded-full ${statusColors[entity.status] ?? ""}`}>
                 {formatLabel(entity.status)}
               </span>
             </div>

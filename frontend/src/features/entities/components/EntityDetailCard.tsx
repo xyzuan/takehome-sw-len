@@ -1,21 +1,9 @@
-import { Car, Cpu, Building, Circle, X, MapPin } from "lucide-react";
+import { X, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useEntity } from "@/services/entity";
 import { useUIStore } from "@/store/ui";
 import { formatLabel } from "@/constants/labels";
-
-const typeStyles: Record<string, { icon: typeof Car; bg: string; text: string }> = {
-  vehicle: { icon: Car, bg: "bg-blue-500", text: "text-white" },
-  iot: { icon: Cpu, bg: "bg-purple-500", text: "text-white" },
-  facility: { icon: Building, bg: "bg-green-500", text: "text-white" },
-  other: { icon: Circle, bg: "bg-gray-500", text: "text-white" },
-};
-
-const statusColors: Record<string, string> = {
-  active: "bg-green-100 text-green-700",
-  inactive: "bg-gray-100 text-gray-500",
-  maintenance: "bg-amber-100 text-amber-700",
-};
+import { typeStyles, statusColors } from "@/constants/entity";
 
 export const EntityDetailCard = () => {
   const selectedEntityId = useUIStore((s) => s.selectedEntityId);
