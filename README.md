@@ -48,20 +48,26 @@ The first start seeds 100 demo entities in a circular distribution around Bandun
 ## Library Choices
 
 ### Backend
-- **Gin** — HTTP router with JSON binding and middleware. Chosen for its lightweight footprint and built-in validation integration.
-- **GORM** — Go ORM for queries and CRUD. Used for data access only (not AutoMigrate); schema is managed by explicit SQL migrations.
-- **go-playground/validator** — Struct-tag validation serving the PRD's backend validation requirement. Custom validators added for lat/lng ranges.
-- **gogis (github.com/restayway/gogis)** — PostGIS geometry types for GORM. Provides Point, LineString, Polygon types implementing sql.Scanner and driver.Valuer. Chosen over a custom Point type for battle-tested WKB/WKT serialization. Uses geometry(Point, 4326) column type.
-- **PostgreSQL + PostGIS** — Stores location as `geometry(Point, 4326)`. Enables spatial queries (ST_Within for viewport filtering).
+
+| Library | Purpose | Reason |
+|---------|---------|--------|
+| Gin | HTTP router with JSON binding and middleware | Lightweight footprint and built-in validation integration |
+| GORM | Go ORM for queries and CRUD | Data access only (not AutoMigrate); schema managed by explicit SQL migrations |
+| go-playground/validator | Struct-tag validation | Serves the PRD's backend validation requirement; custom validators for lat/lng ranges |
+| gogis (github.com/restayway/gogis) | PostGIS geometry types for GORM | Point/LineString/Polygon implementing sql.Scanner and driver.Valuer; battle-tested WKB/WKT serialization |
+| PostgreSQL + PostGIS | Database | Stores location as `geometry(Point, 4326)`; enables spatial queries (ST_Within for viewport filtering) |
 
 ### Frontend
-- **React 19 + TypeScript + Vite** — Modern, fast HMR, strong typing.
-- **Tailwind CSS + shadcn/ui** — Utility-first styling + accessible component primitives (Dialog, Sheet, AlertDialog, Select) for the floating overlay UI.
-- **mapcn (MapLibre GL)** — Free map components, zero-config CARTO tiles, no API key needed. Styled with Tailwind, integrates with shadcn.
-- **TanStack Query** — Server state management with caching, optimistic updates, and auto-refetch.
-- **react-hook-form + zod** — Form state + schema validation mirroring backend rules.
-- **Zustand** — Minimal ephemeral UI state (pick mode, selected entity, active overlay).
-- **lucide-react** — Icons for marker styling by entity type.
+
+| Library | Purpose | Reason |
+|---------|---------|--------|
+| React 19 + TypeScript + Vite | UI framework + build tooling | Modern, fast HMR, strong typing |
+| Tailwind CSS + shadcn/ui | Styling + component primitives | Utility-first styling + accessible primitives (Dialog, Sheet, AlertDialog, Select) for floating overlay UI |
+| mapcn (MapLibre GL) | Map rendering | Free map components, zero-config CARTO tiles, no API key needed; styled with Tailwind, integrates with shadcn |
+| TanStack Query | Server state management | Caching, optimistic updates, and auto-refetch |
+| react-hook-form + zod | Form state + schema validation | Mirrors backend validation rules on the client |
+| Zustand | Ephemeral UI state | Minimal state for pick mode, selected entity, active overlay |
+| lucide-react | Icons | Marker styling by entity type |
 
 ## Agentic AI Workflow
 
