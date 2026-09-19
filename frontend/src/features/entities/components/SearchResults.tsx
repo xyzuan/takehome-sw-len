@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import { ArrowLeft, Search, Car, Cpu, Building, Circle } from "lucide-react";
-import { useSearchEntities } from "@/api/entity";
+import { useSearchEntities } from "@/services/entity";
 import { useUIStore } from "@/store/ui";
 import { EntityCardSkeleton } from "@/features/entities/components/EntityCardSkeleton";
 import { formatLabel } from "@/constants/labels";

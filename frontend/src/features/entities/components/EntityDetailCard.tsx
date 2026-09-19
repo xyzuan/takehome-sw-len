@@ -1,6 +1,6 @@
 import { Car, Cpu, Building, Circle, X, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useEntity } from "@/api/entity";
+import { useEntity } from "@/services/entity";
 import { useUIStore } from "@/store/ui";
 import { formatLabel } from "@/constants/labels";
 

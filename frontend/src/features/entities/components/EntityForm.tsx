@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { entitySchema, type EntityFormValues } from "@/schemas/entity";
-import { useCreateEntity, useUpdateEntity } from "@/api/entity";
+import { useCreateEntity, useUpdateEntity } from "@/services/entity";
 import { useUIStore } from "@/store/ui";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";

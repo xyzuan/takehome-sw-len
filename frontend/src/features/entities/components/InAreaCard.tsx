@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { EntityCard } from "@/features/entities/components/EntityCard";
 import { EntityCardSkeleton } from "@/features/entities/components/EntityCardSkeleton";
-import { useMapEntities } from "@/api/entity";
+import { useMapEntities } from "@/services/entity";
 import { useUIStore } from "@/store/ui";
 import type { Entity } from "@/interfaces/entity";
 
