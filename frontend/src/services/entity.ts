@@ -1,6 +1,5 @@
 import axios from "axios";
 import { useQuery, useMutation, useInfiniteQuery, keepPreviousData } from "@tanstack/react-query";
-import { toast } from "sonner";
 import client from "@/libs/axios";
 import { queryClient } from "@/libs/query";
 import { entityKeys } from "@/constants/query-keys";
@@ -57,7 +56,6 @@ export const useCreateEntity = () => {
     mutationFn: async (input: EntityInput) => client.post("/entities", input) as unknown as Promise<Entity>,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["entities"] });
-      toast.success("Entity created");
     },
   });
 };
@@ -68,7 +66,6 @@ export const useUpdateEntity = () => {
       client.put(`/entities/${id}`, input) as unknown as Promise<Entity>,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["entities"] });
-      toast.success("Entity updated");
     },
   });
 };
@@ -80,7 +77,6 @@ export const useDeleteEntity = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["entities"] });
-      toast.success("Entity deleted");
     },
   });
 };

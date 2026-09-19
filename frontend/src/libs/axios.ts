@@ -18,23 +18,32 @@ const client = axios.create({
   headers: { "Content-Type": "application/json" },
 });
 
-const onError = (err: unknown) => {
-  if (err instanceof ApiError) {
-    toast.error(err.message);
-  } else {
-    toast.error("An unexpected error occurred");
-  }
+const isMutationMethod = (method?: string) => {
+  const m = (method ?? "").toLowerCase();
+  return m === "post" || m === "put" || m === "patch" || m === "delete";
 };
 
-// Response interceptor: unwrap the flat envelope + toast errors.
+// Response interceptor: unwrap the flat envelope + toast results.
 client.interceptors.response.use(
   (response) => {
+    // 204 No Content — no body, toast for mutations only
+    if (response.status === 204) {
+      if (isMutationMethod(response.config.method)) {
+        toast.success("Deleted");
+      }
+      return response;
+    }
+
     const body = response.data as ApiResponse<unknown>;
     if (body.status_code >= 200 && body.status_code < 300) {
+      // Toast success for mutations using the backend's message
+      if (isMutationMethod(response.config.method)) {
+        toast.success(body.message);
+      }
       return body.data as unknown as AxiosResponse;
     }
     const apiError = new ApiError(body.status_code, body.message, body.errors);
-    onError(apiError);
+    toast.error(apiError.message);
     throw apiError;
   },
   (error) => {
@@ -45,7 +54,7 @@ client.interceptors.response.use(
     } else {
       apiError = new ApiError(0, error.message || "network error");
     }
-    onError(apiError);
+    toast.error(apiError.message);
     throw apiError;
   },
 );
