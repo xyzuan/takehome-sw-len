@@ -2,6 +2,8 @@ import { X, MapPin, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useEntity, useDeleteEntity } from "@/services/entity";
+import { queryClient } from "@/libs/query";
+import { QKEY_ENTITY_DETAIL } from "@/constants/query-keys";
 import { useUIStore } from "@/store/ui";
 import { formatLabel } from "@/constants/labels";
 import { typeStyles, statusColors } from "@/constants/entity";
@@ -12,7 +14,6 @@ export const EntityDetailCard = () => {
   const entity = entityRes?.data;
   const setActiveOverlay = useUIStore((s) => s.setActiveOverlay);
   const setSelectedEntityId = useUIStore((s) => s.setSelectedEntityId);
-  const reset = useUIStore((s) => s.reset);
   const deleteMut = useDeleteEntity();
 
   if (!entity) return null;
@@ -26,8 +27,11 @@ export const EntityDetailCard = () => {
   };
 
   const handleDelete = async () => {
-    await deleteMut.mutateAsync(entity.id);
-    reset();
+    const id = entity.id;
+    setSelectedEntityId(null);
+    setActiveOverlay("none");
+    await deleteMut.mutateAsync(id);
+    queryClient.removeQueries({ queryKey: [...QKEY_ENTITY_DETAIL, id] });
   };
 
   return (
