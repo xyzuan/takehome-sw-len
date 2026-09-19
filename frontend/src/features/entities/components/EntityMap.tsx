@@ -25,7 +25,7 @@ export const EntityMap = ({ children }: { children?: ReactNode }) => {
   const search = useUIStore((s) => s.search);
   const selectedEntityId = useUIStore((s) => s.selectedEntityId);
   const darkMode = useUIStore((s) => s.darkMode);
-  const { data: entities } = useMapEntities(bbox, typeFilter, statusFilter);
+  const { data: mapData } = useMapEntities({ bbox: bbox ?? undefined, type: typeFilter, status: statusFilter });
   const pickMode = useUIStore((s) => s.pickMode);
   const draftEntity = useUIStore((s) => s.draftEntity);
   const draftLatLng = useUIStore((s) => s.draftLatLng);
@@ -45,7 +45,7 @@ export const EntityMap = ({ children }: { children?: ReactNode }) => {
   );
 
   const filtered = useMemo(() => {
-    const baseEntities = entities ?? [];
+    const baseEntities = mapData?.data ?? [];
     let result: Entity[] = baseEntities;
     if (selectedEntityId) {
       result = baseEntities.filter((e) => e.id === selectedEntityId);
@@ -66,7 +66,7 @@ export const EntityMap = ({ children }: { children?: ReactNode }) => {
       result = [...result, draftEntity as Entity];
     }
     return result;
-  }, [entities, search, selectedEntityId, draftEntity, draftLatLng]);
+  }, [mapData, search, selectedEntityId, draftEntity, draftLatLng]);
 
   return (
     <Map center={[107.6195, -6.9495]} zoom={14} theme={darkMode ? "dark" : "light"} className="w-full h-full">

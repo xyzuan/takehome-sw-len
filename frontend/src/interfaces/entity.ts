@@ -26,6 +26,13 @@ export interface EntityInput {
   attributes?: Record<string, unknown>;
 }
 
+export interface EntityQueryParams {
+  type?: string;
+  status?: string;
+  bbox?: string;
+  zoom?: number;
+}
+
 export interface EntityMapResponse extends ApiResponse<Entity[]> {}
 export interface EntityListResponse extends ApiResponse<Entity[]> {}
 export interface EntityResponse extends ApiResponse<Entity> {}

@@ -7,11 +7,14 @@ export interface IQueryRequest {
   per_page?: number;
   sort?: TSort;
   orderBy?: string;
-  type?: string;
-  status?: string;
-  bbox?: string;
-  zoom?: number;
 }
+
+export type TOptionalParams<T extends object = object> = <
+  K extends keyof (IQueryRequest & T)
+>(
+  key: K,
+  value: (IQueryRequest & T)[K]
+) => void;
 
 export interface PaginationMeta {
   current_page: number;

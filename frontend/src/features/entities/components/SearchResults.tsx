@@ -14,11 +14,11 @@ export const SearchResults = () => {
   const setActiveOverlay = useUIStore((s) => s.setActiveOverlay);
   const setSearch = useUIStore((s) => s.setSearch);
 
-  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } = useSearchEntities(
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } = useSearchEntities({
     search,
-    typeFilter,
-    statusFilter,
-  );
+    type: typeFilter,
+    status: statusFilter,
+  });
 
   const scrollRef = useRef<HTMLDivElement>(null);
   const sentinelRef = useRef<HTMLDivElement>(null);
@@ -48,7 +48,7 @@ export const SearchResults = () => {
     setActiveOverlay("none");
   };
 
-  const allEntities = data?.pages.flatMap((p) => p.data) ?? [];
+  const allEntities = data?.pages.flatMap((p) => p.data ?? []) ?? [];
 
   return (
     <div className="w-full bg-background/95 backdrop-blur border rounded-xl shadow-md p-4">

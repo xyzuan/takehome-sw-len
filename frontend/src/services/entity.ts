@@ -1,33 +1,29 @@
-import axios from "axios";
 import { useQuery, useMutation, useInfiniteQuery, keepPreviousData } from "@tanstack/react-query";
 import client from "@/libs/axios";
 import { queryClient } from "@/libs/query";
-import { entityKeys } from "@/constants/query-keys";
+import { QKEY_ENTITIES_MAP, QKEY_ENTITIES_LIST, QKEY_ENTITY_DETAIL, QKEY_ENTITIES } from "@/constants/query-keys";
 import { generateUrlParams } from "@/utils/params";
-import type { Entity, EntityInput } from "@/interfaces/entity";
-import type { ApiResponse, PaginationMeta, IQueryRequest } from "@/interfaces/api";
+import type { Entity, EntityInput, EntityQueryParams } from "@/interfaces/entity";
+import type { ApiResponse, IQueryRequest } from "@/interfaces/api";
 
-export const useMapEntities = (bbox: string | null, type?: string, status?: string) => {
-  return useQuery({
-    queryKey: entityKeys.map(bbox ?? "", [type, status].filter(Boolean).join(",")),
-    queryFn: async () => {
-      const query: IQueryRequest = { bbox: bbox!, type, status };
-      return client.get(`/entities/map${generateUrlParams(query)}`) as unknown as Promise<Entity[]>;
-    },
-    enabled: !!bbox,
+type MapQuery = IQueryRequest & EntityQueryParams;
+
+export const useMapEntities = (query: MapQuery) =>
+  useQuery({
+    queryKey: [QKEY_ENTITIES_MAP, { ...query }],
+    queryFn: async (): Promise<ApiResponse<Entity[]>> =>
+      client.get(`/entities/map${generateUrlParams(query)}`).then((res) => res.data),
+    enabled: !!query.bbox,
     placeholderData: keepPreviousData,
   });
-};
 
-export const useSearchEntities = (search: string, type?: string, status?: string) => {
-  return useInfiniteQuery({
-    queryKey: entityKeys.list(0, 10, [search, type, status].filter(Boolean).join(",")),
-    queryFn: async ({ pageParam }) => {
-      const query: IQueryRequest = { page: pageParam, per_page: 10, search, type, status };
-      const res = await axios.get(`/api/entities${generateUrlParams(query)}`);
-      const body = res.data as ApiResponse<Entity[]>;
-      return { data: body.data ?? [], meta: (body.meta ?? null) as PaginationMeta | null };
-    },
+export const useSearchEntities = (query: IQueryRequest & EntityQueryParams) =>
+  useInfiniteQuery({
+    queryKey: [QKEY_ENTITIES_LIST, { ...query }],
+    queryFn: async ({ pageParam }): Promise<ApiResponse<Entity[]>> =>
+      client
+        .get(`/entities${generateUrlParams({ ...query, page: pageParam, per_page: 10 })}`)
+        .then((res) => res.data),
     initialPageParam: 1,
     getNextPageParam: (lastPage) => {
       if (!lastPage.meta) return undefined;
@@ -35,44 +31,40 @@ export const useSearchEntities = (search: string, type?: string, status?: string
         ? lastPage.meta.current_page + 1
         : undefined;
     },
-    enabled: search.length > 0,
+    enabled: !!query.search && query.search.length > 0,
   });
-};
 
-export const useEntity = (id: string | null) => {
-  return useQuery({
-    queryKey: entityKeys.detail(id ?? ""),
-    queryFn: async () => client.get(`/entities/${id}`) as unknown as Promise<Entity>,
+export const useEntity = (id: string | null) =>
+  useQuery({
+    queryKey: [QKEY_ENTITY_DETAIL, id ?? ""],
+    queryFn: async (): Promise<ApiResponse<Entity>> =>
+      client.get(`/entities/${id}`).then((res) => res.data),
     enabled: !!id,
   });
-};
 
-export const useCreateEntity = () => {
-  return useMutation({
-    mutationFn: async (input: EntityInput) => client.post("/entities", input) as unknown as Promise<Entity>,
+export const useCreateEntity = () =>
+  useMutation({
+    mutationFn: async (input: EntityInput): Promise<ApiResponse<Entity>> =>
+      client.post("/entities", input).then((res) => res.data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["entities"] });
+      queryClient.invalidateQueries({ queryKey: [QKEY_ENTITIES] });
     },
   });
-};
 
-export const useUpdateEntity = () => {
-  return useMutation({
-    mutationFn: async ({ id, input }: { id: string; input: EntityInput }) =>
-      client.put(`/entities/${id}`, input) as unknown as Promise<Entity>,
+export const useUpdateEntity = () =>
+  useMutation({
+    mutationFn: async ({ id, input }: { id: string; input: EntityInput }): Promise<ApiResponse<Entity>> =>
+      client.put(`/entities/${id}`, input).then((res) => res.data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["entities"] });
+      queryClient.invalidateQueries({ queryKey: [QKEY_ENTITIES] });
     },
   });
-};
 
-export const useDeleteEntity = () => {
-  return useMutation({
-    mutationFn: async (id: string) => {
-      await client.delete(`/entities/${id}`);
-    },
+export const useDeleteEntity = () =>
+  useMutation({
+    mutationFn: async (id: string): Promise<ApiResponse<null>> =>
+      client.delete(`/entities/${id}`).then((res) => res.data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["entities"] });
+      queryClient.invalidateQueries({ queryKey: [QKEY_ENTITIES] });
     },
   });
-};

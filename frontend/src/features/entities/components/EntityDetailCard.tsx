@@ -7,7 +7,8 @@ import { typeStyles, statusColors } from "@/constants/entity";
 
 export const EntityDetailCard = () => {
   const selectedEntityId = useUIStore((s) => s.selectedEntityId);
-  const { data: entity } = useEntity(selectedEntityId);
+  const { data: entityRes } = useEntity(selectedEntityId);
+  const entity = entityRes?.data;
   const setActiveOverlay = useUIStore((s) => s.setActiveOverlay);
   const setSelectedEntityId = useUIStore((s) => s.setSelectedEntityId);
 

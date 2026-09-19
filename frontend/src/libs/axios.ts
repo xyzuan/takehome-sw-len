@@ -1,4 +1,4 @@
-import axios, { type AxiosResponse } from "axios";
+import axios from "axios";
 import { toast } from "sonner";
 import type { ApiResponse } from "@/interfaces/api";
 
@@ -23,16 +23,15 @@ const isMutationMethod = (method?: string) => {
   return m === "post" || m === "put" || m === "patch" || m === "delete";
 };
 
-// Response interceptor: unwrap the flat envelope + toast results.
+// Response interceptor: toast results, keep envelope intact.
 client.interceptors.response.use(
   (response) => {
     const body = response.data as ApiResponse<unknown>;
     if (body.status_code >= 200 && body.status_code < 300) {
-      // Toast success for mutations using the backend's message
       if (isMutationMethod(response.config.method)) {
         toast.success(body.message);
       }
-      return body.data as unknown as AxiosResponse;
+      return response;
     }
     const apiError = new ApiError(body.status_code, body.message, body.errors);
     toast.error(apiError.message);

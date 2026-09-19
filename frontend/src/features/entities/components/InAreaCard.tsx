@@ -12,7 +12,7 @@ export const InAreaCard = () => {
   const typeFilter = useUIStore((s) => s.typeFilter);
   const statusFilter = useUIStore((s) => s.statusFilter);
   const search = useUIStore((s) => s.search);
-  const { data: entities, isPending, isFetching } = useMapEntities(bbox, typeFilter, statusFilter);
+  const { data: mapData, isPending, isFetching } = useMapEntities({ bbox: bbox ?? undefined, type: typeFilter, status: statusFilter });
 
   const [showSkeleton, setShowSkeleton] = useState(false);
   const skeletonStartRef = useRef<number | null>(null);
@@ -35,11 +35,11 @@ export const InAreaCard = () => {
   }, [isPending]);
 
   const filtered = useMemo(() => {
-    if (!entities) return [];
+    const entities = mapData?.data ?? [];
     if (!search) return entities;
     const q = search.toLowerCase();
     return entities.filter((e) => e.name.toLowerCase().includes(q));
-  }, [entities, search]);
+  }, [mapData, search]);
 
   const handleCardClick = (entity: Entity) => {
     useUIStore.getState().setSelectedEntityId(entity.id);

@@ -5,7 +5,8 @@ import { useUIStore } from "@/store/ui";
 
 export const EntityEditCard = () => {
   const selectedEntityId = useUIStore((s) => s.selectedEntityId);
-  const { data: entity } = useEntity(selectedEntityId);
+  const { data: entityRes } = useEntity(selectedEntityId);
+  const entity = entityRes?.data;
   const setActiveOverlay = useUIStore((s) => s.setActiveOverlay);
   const pickMode = useUIStore((s) => s.pickMode);
   const draftLatLng = useUIStore((s) => s.draftLatLng);
