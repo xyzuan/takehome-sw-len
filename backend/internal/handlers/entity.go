@@ -56,7 +56,7 @@ func (h *EntityHandler) List(c *gin.Context) {
 	lastPage := services.CalcLastPage(total, perPage)
 	c.JSON(http.StatusOK, Response{
 		StatusCode: http.StatusOK,
-		Message:    "OK",
+		Message:    "Entities retrieved successfully",
 		Data:       data,
 		Meta: &PaginationMeta{
 			CurrentPage: page,
@@ -90,7 +90,7 @@ func (h *EntityHandler) Map(c *gin.Context) {
 	for i, e := range entities {
 		data[i] = e.ToJSON()
 	}
-	OK(c, data)
+	OKWithMessage(c, "Map entities retrieved successfully", data)
 }
 
 func (h *EntityHandler) GetByID(c *gin.Context) {
@@ -104,7 +104,7 @@ func (h *EntityHandler) GetByID(c *gin.Context) {
 		NotFound(c, "entity not found")
 		return
 	}
-	OK(c, entity.ToJSON())
+	OKWithMessage(c, "Entity retrieved successfully", entity.ToJSON())
 }
 
 func (h *EntityHandler) Create(c *gin.Context) {
@@ -127,7 +127,7 @@ func (h *EntityHandler) Create(c *gin.Context) {
 		ServerError(c)
 		return
 	}
-	Created(c, entity.ToJSON())
+	CreatedWithMessage(c, "Entity created successfully", entity.ToJSON())
 }
 
 func (h *EntityHandler) Update(c *gin.Context) {
@@ -155,7 +155,7 @@ func (h *EntityHandler) Update(c *gin.Context) {
 		NotFound(c, "entity not found")
 		return
 	}
-	OK(c, entity.ToJSON())
+	OKWithMessage(c, "Entity updated successfully", entity.ToJSON())
 }
 
 func (h *EntityHandler) Delete(c *gin.Context) {
@@ -169,5 +169,5 @@ func (h *EntityHandler) Delete(c *gin.Context) {
 		NotFound(c, "entity not found")
 		return
 	}
-	NoContent(c)
+	Deleted(c)
 }

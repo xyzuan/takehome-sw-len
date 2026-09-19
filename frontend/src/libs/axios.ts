@@ -26,14 +26,6 @@ const isMutationMethod = (method?: string) => {
 // Response interceptor: unwrap the flat envelope + toast results.
 client.interceptors.response.use(
   (response) => {
-    // 204 No Content — no body, toast for mutations only
-    if (response.status === 204) {
-      if (isMutationMethod(response.config.method)) {
-        toast.success("Deleted");
-      }
-      return response;
-    }
-
     const body = response.data as ApiResponse<unknown>;
     if (body.status_code >= 200 && body.status_code < 300) {
       // Toast success for mutations using the backend's message

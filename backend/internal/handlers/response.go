@@ -24,7 +24,15 @@ type PaginationMeta struct {
 func OK(c *gin.Context, data interface{}) {
 	c.JSON(http.StatusOK, Response{
 		StatusCode: http.StatusOK,
-		Message:    "OK",
+		Message:    "Request successful",
+		Data:       data,
+	})
+}
+
+func OKWithMessage(c *gin.Context, msg string, data interface{}) {
+	c.JSON(http.StatusOK, Response{
+		StatusCode: http.StatusOK,
+		Message:    msg,
 		Data:       data,
 	})
 }
@@ -32,13 +40,25 @@ func OK(c *gin.Context, data interface{}) {
 func Created(c *gin.Context, data interface{}) {
 	c.JSON(http.StatusCreated, Response{
 		StatusCode: http.StatusCreated,
-		Message:    "Created",
+		Message:    "Entity created successfully",
 		Data:       data,
 	})
 }
 
-func NoContent(c *gin.Context) {
-	c.Status(http.StatusNoContent)
+func CreatedWithMessage(c *gin.Context, msg string, data interface{}) {
+	c.JSON(http.StatusCreated, Response{
+		StatusCode: http.StatusCreated,
+		Message:    msg,
+		Data:       data,
+	})
+}
+
+func Deleted(c *gin.Context) {
+	c.JSON(http.StatusOK, Response{
+		StatusCode: http.StatusOK,
+		Message:    "Entity deleted successfully",
+		Data:       nil,
+	})
 }
 
 func NotFound(c *gin.Context, msg string) {
@@ -60,7 +80,7 @@ func BadRequest(c *gin.Context, msg string) {
 func ValidationError(c *gin.Context, errors map[string]string) {
 	c.JSON(http.StatusUnprocessableEntity, Response{
 		StatusCode: http.StatusUnprocessableEntity,
-		Message:    "validation failed",
+		Message:    "Please correct the highlighted fields and try again",
 		Data:       nil,
 		Errors:     errors,
 	})
@@ -69,7 +89,7 @@ func ValidationError(c *gin.Context, errors map[string]string) {
 func ConflictError(c *gin.Context, errors map[string]string) {
 	c.JSON(http.StatusConflict, Response{
 		StatusCode: http.StatusConflict,
-		Message:    "conflict",
+		Message:    "This device ID is already in use",
 		Data:       nil,
 		Errors:     errors,
 	})
@@ -78,7 +98,7 @@ func ConflictError(c *gin.Context, errors map[string]string) {
 func ServerError(c *gin.Context) {
 	c.JSON(http.StatusInternalServerError, Response{
 		StatusCode: http.StatusInternalServerError,
-		Message:    "internal server error",
+		Message:    "Something went wrong on our end, please try again",
 		Data:       nil,
 	})
 }
