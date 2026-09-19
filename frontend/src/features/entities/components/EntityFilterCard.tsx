@@ -46,10 +46,10 @@ export const EntityFilterCard = () => {
         )}
       </div>
 
-      <div className="space-y-3">
+      <div className="grid grid-cols-2 gap-3">
         <div>
           <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Type</label>
-          <Select value={typeFilter} onValueChange={(v) => setTypeFilter(v ?? "")}>
+          <Select value={typeFilter} onValueChange={(v) => setTypeFilter(v ?? "")} items={{ "": "All", vehicle: "Vehicle", iot: "IoT", facility: "Facility", other: "Other" }}>
             <SelectTrigger className="h-8 w-full">
               <SelectValue placeholder="All types" />
             </SelectTrigger>
@@ -64,7 +64,7 @@ export const EntityFilterCard = () => {
         </div>
         <div>
           <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Status</label>
-          <Select value={statusFilter} onValueChange={(v) => setStatusFilter(v ?? "")}>
+          <Select value={statusFilter} onValueChange={(v) => setStatusFilter(v ?? "")} items={{ "": "All", active: "Active", inactive: "Inactive", maintenance: "Maintenance" }}>
             <SelectTrigger className="h-8 w-full">
               <SelectValue placeholder="All status" />
             </SelectTrigger>

@@ -51,7 +51,7 @@ export const SearchResults = () => {
   const allEntities = data?.pages.flatMap((p) => p.data ?? []) ?? [];
 
   return (
-    <div className="w-full bg-background/95 backdrop-blur border rounded-xl shadow-md p-4">
+    <div data-search-panel className="w-full bg-background/95 backdrop-blur border rounded-xl shadow-md p-4">
       <div className="flex items-center gap-2 mb-3">
         <button
           onClick={handleBack}
@@ -60,8 +60,8 @@ export const SearchResults = () => {
           <ArrowLeft className="w-4 h-4" />
         </button>
         <Search className="w-4 h-4 text-muted-foreground flex-shrink-0" />
-        <span className="text-sm font-medium truncate">"{search}"</span>
-        {data?.pages[0]?.meta && (
+        <span className="text-sm font-medium truncate">{search ? `"${search}"` : "Search"}</span>
+        {search && data?.pages[0]?.meta && (
           <span className="text-xs text-muted-foreground ml-auto flex-shrink-0">
             {data.pages[0].meta.total} results
           </span>
@@ -71,7 +71,13 @@ export const SearchResults = () => {
       <div ref={scrollRef} className="max-h-[50vh] overflow-y-auto space-y-2 -mr-2 pr-2">
         {isLoading && <SearchListSkeleton />}
 
-        {!isLoading && allEntities.length === 0 && (
+        {!isLoading && !search && (
+          <div className="py-8 text-center text-sm text-muted-foreground">
+            Start typing to search...
+          </div>
+        )}
+
+        {!isLoading && search && allEntities.length === 0 && (
           <div className="py-8 text-center text-sm text-muted-foreground">
             No entities found for "{search}"
           </div>

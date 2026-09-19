@@ -75,9 +75,15 @@ export const EntityDetailCard = () => {
 
       {entity.attributes && Object.keys(entity.attributes).length > 0 && (
         <div className="mb-3">
-          <pre className="text-xs bg-muted p-2 rounded-lg overflow-x-auto max-h-20 overflow-y-auto">
-            {JSON.stringify(entity.attributes, null, 2)}
-          </pre>
+          <div className="text-xs font-medium text-muted-foreground mb-1.5">Attributes</div>
+          <div className="rounded-lg border divide-y">
+            {Object.entries(entity.attributes).map(([key, value]) => (
+              <div key={key} className="flex items-center justify-between gap-3 px-2.5 py-1.5 bg-muted/30">
+                <span className="text-xs font-medium text-muted-foreground flex-shrink-0">{key}</span>
+                <span className="text-xs text-foreground text-right break-all">{String(value)}</span>
+              </div>
+            ))}
+          </div>
         </div>
       )}
 

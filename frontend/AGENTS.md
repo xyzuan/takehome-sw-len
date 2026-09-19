@@ -13,7 +13,7 @@ React 19 + Vite + Tailwind + shadcn/ui + mapcn (MapLibre). See the root `AGENTS.
 - `src/store/` — Zustand UI store (pickMode, selectedEntityId, activeOverlay, draftEntity, draftLatLng, typeFilter, statusFilter, search, darkMode, bbox, zoom, pendingFlyTo, savedMapView, committedPos, debugMode, renderedCount)
 - `src/features/entities/components/` — feature components: EntityMap (full-screen map + bbox tracking + focus handler + rotation), MarkerLayer (fade-in markers + status dots + tooltips), PickMode, BottomNavigation, InAreaCard, EntityCard, EntityCardSkeleton, EntityDetailCard (with delete confirmation popover), EntityEditCard, EntityAddCard, EntityFilterCard, EntityForm, SearchResults, SearchListSkeleton, DebugOverlay, EntityContainer
 - `src/features/entities/hooks/` — useBboxTracker, useMapFocusHandler, useMapRotation
-- `src/components/ui/` — shadcn/ui primitives (button, card, dialog, sheet, alert-dialog, popover, select, input, label, badge, separator, sonner, map, expandable-button)
+- `src/components/ui/` — shadcn/ui primitives (button, card, dialog, sheet, alert-dialog, popover, select, tabs, input, label, badge, separator, sonner, map, expandable-button)
 
 ## Code Style
 

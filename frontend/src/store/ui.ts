@@ -60,7 +60,7 @@ export const useUIStore = create<UIState>((set) => ({
   darkMode: false,
   committedPos: null,
   draftEntity: null,
-  debugMode: false,
+  debugMode: true,
   renderedCount: 0,
 
   setPickMode: (v) => set({ pickMode: v }),
@@ -94,7 +94,7 @@ export const useUIStore = create<UIState>((set) => ({
       darkMode: false,
       committedPos: null,
       draftEntity: null,
-      debugMode: false,
+  debugMode: true,
       renderedCount: 0,
     }),
 }));

@@ -82,6 +82,21 @@ export const DebugOverlay = () => {
             <div className="text-muted-foreground">selected:</div>
             <div className="truncate">{selectedEntityId ?? "—"}</div>
           </div>
+
+          <Separator />
+
+          <div className="pt-1 leading-tight">
+            <div className="text-xs font-semibold">Geo Entity Map Submission</div>
+            <a
+              href="https://github.com/xyzuan"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-xs text-muted-foreground hover:text-foreground transition-colors"
+            >
+              Jody Yuantoro @xyzuan
+            </a>
+            <div className="text-xs text-muted-foreground">for SWE - PT Len Inovasi Teknologi</div>
+          </div>
         </CardContent>
       </Card>
     </div>

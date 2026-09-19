@@ -52,7 +52,7 @@ export const useMapFocusHandler = () => {
       disableInteractions(map);
       const session = ++focusSessionRef.current;
 
-      map.flyTo({ center: [flyTo.lng, flyTo.lat], zoom: 16, pitch: 60, bearing: 0, duration: 1500 });
+      map.flyTo({ center: [flyTo.lng, flyTo.lat], zoom: 16, pitch: 60, bearing: 0, duration: 1500, padding: { bottom: 300 } });
       map.once("moveend", () => {
         if (focusSessionRef.current !== session) return;
         updateBboxFromMap(map);
@@ -90,7 +90,7 @@ export const useMapFocusHandler = () => {
       focusSessionRef.current++;
       const session = focusSessionRef.current;
 
-      map.flyTo({ center: [flyTo.lng, flyTo.lat], zoom: 16, pitch: 60, bearing: 0, duration: 1500 });
+      map.flyTo({ center: [flyTo.lng, flyTo.lat], zoom: 16, pitch: 60, bearing: 0, duration: 1500, padding: { bottom: 300 } });
       map.once("moveend", () => {
         if (focusSessionRef.current !== session) return;
         updateBboxFromMap(map);
@@ -110,7 +110,7 @@ export const useMapFocusHandler = () => {
       const session = focusSessionRef.current;
       disableInteractions(map);
 
-      map.flyTo({ center: [pendingFlyTo.lng, pendingFlyTo.lat], zoom: 16, pitch: 60, bearing: 0, duration: 1500 });
+      map.flyTo({ center: [pendingFlyTo.lng, pendingFlyTo.lat], zoom: 16, pitch: 60, bearing: 0, duration: 1500, padding: { bottom: 300 } });
       map.once("moveend", () => {
         if (focusSessionRef.current !== session) return;
         updateBboxFromMap(map);
@@ -141,7 +141,7 @@ export const useMapFocusHandler = () => {
       disableInteractions(map);
       const session = ++focusSessionRef.current;
 
-      map.flyTo({ center: [pendingFlyTo.lng, pendingFlyTo.lat], zoom: 16, pitch: 60, bearing: 0, duration: 1500 });
+      map.flyTo({ center: [pendingFlyTo.lng, pendingFlyTo.lat], zoom: 16, pitch: 60, bearing: 0, duration: 1500, padding: { bottom: 300 } });
       map.once("moveend", () => {
         if (focusSessionRef.current !== session) return;
         updateBboxFromMap(map);
@@ -166,7 +166,7 @@ export const useMapFocusHandler = () => {
       const session = focusSessionRef.current;
       disableInteractions(map);
 
-      map.flyTo({ center: [pendingFlyTo.lng, pendingFlyTo.lat], zoom: 16, pitch: 60, bearing: 0, duration: 1500 });
+      map.flyTo({ center: [pendingFlyTo.lng, pendingFlyTo.lat], zoom: 16, pitch: 60, bearing: 0, duration: 1500, padding: { bottom: 300 } });
       map.once("moveend", () => {
         if (focusSessionRef.current !== session) return;
         updateBboxFromMap(map);
@@ -209,7 +209,7 @@ export const useMapFocusHandler = () => {
         const session = focusSessionRef.current;
         disableInteractions(map);
 
-        map.flyTo({ center: [origPos.lng, origPos.lat], zoom: 16, pitch: 60, bearing: 0, duration: 1500 });
+        map.flyTo({ center: [origPos.lng, origPos.lat], zoom: 16, pitch: 60, bearing: 0, duration: 1500, padding: { bottom: 300 } });
         map.once("moveend", () => {
           if (focusSessionRef.current !== session) return;
           updateBboxFromMap(map);

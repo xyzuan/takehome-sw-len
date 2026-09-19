@@ -1,5 +1,7 @@
 # Geo Entity Map App
 
+![Preview](assets/preview_1.png)
+
 An application to display and manage geo-located entities (vehicles, IoT devices, facilities) on an interactive map. Built as a take-home test.
 
 ## Prerequisites
@@ -18,6 +20,19 @@ docker compose up -d --build
 - Database: localhost:5432 (user: geo, password: geo, db: geoapp)
 
 The first start seeds 100 demo entities in a circular distribution around Bandung (centered on PT Len Industri).
+
+## Features
+
+| Preview | Feature Name | Description |
+|---------|--------------|-------------|
+| ![In-Bbox Entities](assets/in_bbox_entity.png) | Viewport Entity Rendering | PostGIS `ST_Within` bbox query returns only entities within the map viewport for lightweight marker rendering. |
+| ![Detail Entity](assets/detail_entity.png) | Entity Detail | Click a marker to view full entity details (type, status, coordinates, attributes) in a floating card. |
+| ![Edit Detail Entity](assets/edit_detail_entity.png) | Edit Entity — Detail | Inline edit form with device ID, name, type, status, description, and coordinates. |
+| ![Edit Attribute Entity](assets/edit_attribute_entity.png) | Edit Entity — Attributes | Key-value FieldArray editor for entity attributes with add/remove rows. |
+| ![Search Entity](assets/search_entity.png) | Search Entities | Backend-side ILIKE name search with paginated infinite scroll results. |
+| ![Filter Entity](assets/filter_entity.png) | Filter Entities | Filter entities by type and status via query params on both map and list endpoints. |
+| ![Bottom Nav Action](assets/bottom_nav_action.png) | Bottom Navigation | Expandable action buttons (Add, Filter, Dark Mode, Debug) with smooth hover animations. |
+| ![Debug Overlay](assets/debug_overlay.png) | Debug Overlay | Live diagnostics panel showing bbox, filters, fetch state, and render counts. |
 
 ## API Endpoints
 
