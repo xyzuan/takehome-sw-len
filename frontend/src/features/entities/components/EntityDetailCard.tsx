@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { X, MapPin, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -15,6 +16,7 @@ export const EntityDetailCard = () => {
   const setActiveOverlay = useUIStore((s) => s.setActiveOverlay);
   const setSelectedEntityId = useUIStore((s) => s.setSelectedEntityId);
   const deleteMut = useDeleteEntity();
+  const [deleteOpen, setDeleteOpen] = useState(false);
 
   if (!entity) return null;
 
@@ -88,7 +90,7 @@ export const EntityDetailCard = () => {
         >
           Edit
         </Button>
-        <Popover>
+        <Popover open={deleteOpen} onOpenChange={setDeleteOpen}>
           <PopoverTrigger
             render={
               <Button
@@ -116,7 +118,10 @@ export const EntityDetailCard = () => {
                 <Button
                   size="sm"
                   variant="destructive"
-                  onClick={handleDelete}
+                  onClick={() => {
+                    setDeleteOpen(false);
+                    handleDelete();
+                  }}
                   disabled={deleteMut.isPending}
                 >
                   {deleteMut.isPending ? "Deleting..." : "Delete"}
@@ -124,7 +129,7 @@ export const EntityDetailCard = () => {
                 <Button
                   size="sm"
                   variant="outline"
-                  onClick={handleClose}
+                  onClick={() => setDeleteOpen(false)}
                 >
                   Cancel
                 </Button>
