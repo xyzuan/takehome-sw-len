@@ -1,4 +1,5 @@
 import type { EntityType, EntityStatus } from "@/types/entity";
+import type { ApiResponse } from "./api";
 
 export interface Entity {
   id: string;
@@ -24,3 +25,7 @@ export interface EntityInput {
   lng: number;
   attributes?: Record<string, unknown>;
 }
+
+export interface EntityMapResponse extends ApiResponse<Entity[]> {}
+export interface EntityListResponse extends ApiResponse<Entity[]> {}
+export interface EntityResponse extends ApiResponse<Entity> {}
