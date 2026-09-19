@@ -2,9 +2,28 @@ package validation
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/go-playground/validator/v10"
 )
+
+// fieldLabels maps snake_case field names to human-readable labels.
+var fieldLabels = map[string]string{
+	"device_id":   "Device ID",
+	"name":        "Name",
+	"type":        "Type",
+	"status":      "Status",
+	"description": "Description",
+	"lat":         "Latitude",
+	"lng":         "Longitude",
+}
+
+func label(field string) string {
+	if l, ok := fieldLabels[field]; ok {
+		return l
+	}
+	return field
+}
 
 // RegisterLatLng adds custom validators for latitude and longitude ranges.
 func RegisterLatLng(v *validator.Validate) {
@@ -26,21 +45,22 @@ func FormatValidationErrors(err error) map[string]string {
 		for _, fe := range ves {
 			field := fe.Field()
 			tag := fe.Tag()
+			l := label(field)
 			switch tag {
 			case "required":
-				errors[field] = fmt.Sprintf("%s is required", field)
+				errors[field] = fmt.Sprintf("%s is required", l)
 			case "oneof":
-				errors[field] = fmt.Sprintf("%s must be one of: %s", field, fe.Param())
+				errors[field] = fmt.Sprintf("%s must be one of: %s", l, strings.ReplaceAll(fe.Param(), " ", ", "))
 			case "min":
-				errors[field] = fmt.Sprintf("%s must be at least %s characters", field, fe.Param())
+				errors[field] = fmt.Sprintf("%s must be at least %s characters", l, fe.Param())
 			case "max":
-				errors[field] = fmt.Sprintf("%s must be at most %s characters", field, fe.Param())
+				errors[field] = fmt.Sprintf("%s must be at most %s characters", l, fe.Param())
 			case "lat":
-				errors[field] = "lat must be between -90 and 90"
+				errors[field] = fmt.Sprintf("%s must be between -90 and 90", l)
 			case "lng":
-				errors[field] = "lng must be between -180 and 180"
+				errors[field] = fmt.Sprintf("%s must be between -180 and 180", l)
 			default:
-				errors[field] = fmt.Sprintf("%s failed validation: %s", field, tag)
+				errors[field] = fmt.Sprintf("%s is invalid", l)
 			}
 		}
 	}

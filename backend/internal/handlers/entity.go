@@ -121,7 +121,7 @@ func (h *EntityHandler) Create(c *gin.Context) {
 	entity, err := h.svc.Create(&in)
 	if err != nil {
 		if errors.Is(err, services.ErrConflict) {
-			ConflictError(c, map[string]string{"device_id": "device_id already exists"})
+			ConflictError(c, map[string]string{"device_id": "Device ID already exists"})
 			return
 		}
 		ServerError(c)
@@ -145,7 +145,7 @@ func (h *EntityHandler) Update(c *gin.Context) {
 	entity, err := h.svc.Update(id, &in)
 	if err != nil {
 		if errors.Is(err, services.ErrConflict) {
-			ConflictError(c, map[string]string{"device_id": "device_id already exists"})
+			ConflictError(c, map[string]string{"device_id": "Device ID already exists"})
 			return
 		}
 		ServerError(c)
