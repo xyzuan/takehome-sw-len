@@ -8,6 +8,16 @@ import { useMapEntities } from "@/features/entities/hooks";
 import { useUIStore } from "@/store/ui";
 import type { Entity } from "@/interface/entity.interface";
 
+function BboxTracker() {
+  useBboxTracker();
+  return null;
+}
+
+function MapFocusHandler() {
+  useMapFocusHandler();
+  return null;
+}
+
 export function EntityMap({ children }: { children?: ReactNode }) {
   const bbox = useUIStore((s) => s.bbox);
   const typeFilter = useUIStore((s) => s.typeFilter);
@@ -21,9 +31,6 @@ export function EntityMap({ children }: { children?: ReactNode }) {
   const draftLatLng = useUIStore((s) => s.draftLatLng);
   const setDraftLatLng = useUIStore((s) => s.setDraftLatLng);
   const setActiveOverlay = useUIStore((s) => s.setActiveOverlay);
-
-  useBboxTracker();
-  useMapFocusHandler();
 
   const handlePick = useCallback(
     (lat: number, lng: number) => {
@@ -63,6 +70,8 @@ export function EntityMap({ children }: { children?: ReactNode }) {
 
   return (
     <Map center={[107.6195, -6.9495]} zoom={14} theme={darkMode ? "dark" : "light"} className="w-full h-full">
+      <BboxTracker />
+      <MapFocusHandler />
       <MarkerLayer
         entities={filtered}
         onSelect={(e) => {
