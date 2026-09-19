@@ -5,6 +5,7 @@
 An application to display and manage geo-located entities (vehicles, IoT devices, facilities) on an interactive map. Built as a take-home test.
 
 [![Live Demo](https://img.shields.io/badge/Live_Demo-takehome--sw--len.xyzuan.com-22c55e?style=for-the-badge&logo=googlechrome&logoColor=white)](https://takehome-sw-len.xyzuan.com)
+[![wakatime](https://wakatime.com/badge/user/eed4b38e-69d2-4d6b-9133-6e86bdb951a5/project/6b838676-834a-47bf-8314-eeb31d42a403.svg)](https://wakatime.com/badge/user/eed4b38e-69d2-4d6b-9133-6e86bdb951a5/project/6b838676-834a-47bf-8314-eeb31d42a403)
 
 ## Prerequisites
 
@@ -79,5 +80,20 @@ This project was built using Agentic AI (opencode with superpowers). The workflo
 2. **Spec** — Wrote and reviewed a design document covering data model, API contract, validation rules, and UX.
 3. **Plan** — Generated a task-by-task implementation plan with full code.
 4. **Implementation** — Executed the plan task by task, verifying each step.
+
+### AI Agents Used
+
+| Component | Tool / Model |
+|----------|-------------|
+| IDE | OpenChamber (openchamber.dev) |
+| Model | GLM 5.2 (primary) |
+| MCP | context7, shadcn |
+| Skills | superpowers (subagent-driven development) |
+
+### Project Time Report
+
+[![WakaTime Report](assets/wakatime.png)](https://wakatime.com/@xyzuan/projects/lxmfvpqkel?start=2026-09-13&end=2026-09-19)
+
+Full report: [WakaTime — Sep 13-19, 2026](https://wakatime.com/@xyzuan/projects/lxmfvpqkel?start=2026-09-13&end=2026-09-19)
 
 See `AGENTS.md` for AI agent configuration details.
