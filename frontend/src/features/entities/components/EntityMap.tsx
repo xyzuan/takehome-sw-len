@@ -4,9 +4,9 @@ import { MarkerLayer } from "./MarkerLayer";
 import { PickMode } from "./PickMode";
 import { useBboxTracker } from "./hooks/useBboxTracker";
 import { useMapFocusHandler } from "./hooks/useMapFocusHandler";
-import { useMapEntities } from "@/features/entities/hooks";
+import { useMapEntities } from "@/api/entity";
 import { useUIStore } from "@/store/ui";
-import type { Entity } from "@/interface/entity.interface";
+import type { Entity } from "@/interfaces/entity";
 
 function BboxTracker() {
   useBboxTracker();

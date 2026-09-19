@@ -1,6 +1,6 @@
 import { ArrowLeft, MapPin } from "lucide-react";
-import { EntityForm } from "@/features/entities/EntityForm";
-import { useEntity } from "@/features/entities/hooks";
+import { EntityForm } from "@/features/entities/components/EntityForm";
+import { useEntity } from "@/api/entity";
 import { useUIStore } from "@/store/ui";
 
 export function EntityEditCard() {

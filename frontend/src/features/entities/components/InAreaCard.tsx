@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { EntityCard } from "@/components/EntityCard";
-import { EntityCardSkeleton } from "@/components/EntityCardSkeleton";
-import { useMapEntities } from "@/features/entities/hooks";
+import { EntityCard } from "@/features/entities/components/EntityCard";
+import { EntityCardSkeleton } from "@/features/entities/components/EntityCardSkeleton";
+import { useMapEntities } from "@/api/entity";
 import { useUIStore } from "@/store/ui";
-import type { Entity } from "@/interface/entity.interface";
+import type { Entity } from "@/interfaces/entity";
 
 const MIN_SKELETON_MS = 400;
 

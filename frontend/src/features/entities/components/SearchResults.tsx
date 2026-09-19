@@ -1,10 +1,10 @@
 import { useEffect, useRef } from "react";
 import { ArrowLeft, Search, Car, Cpu, Building, Circle } from "lucide-react";
-import { useSearchEntities } from "@/features/entities/hooks";
+import { useSearchEntities } from "@/api/entity";
 import { useUIStore } from "@/store/ui";
-import { EntityCardSkeleton } from "@/components/EntityCardSkeleton";
-import { formatLabel } from "@/consts/labels";
-import type { Entity } from "@/interface/entity.interface";
+import { EntityCardSkeleton } from "@/features/entities/components/EntityCardSkeleton";
+import { formatLabel } from "@/constants/labels";
+import type { Entity } from "@/interfaces/entity";
 
 const typeStyles: Record<string, { icon: typeof Car; bg: string; text: string }> = {
   vehicle: { icon: Car, bg: "bg-blue-500", text: "text-white" },

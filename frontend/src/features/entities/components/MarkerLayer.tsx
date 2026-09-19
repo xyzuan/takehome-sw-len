@@ -1,7 +1,7 @@
 import { useRef } from "react";
 import { MapMarker, MarkerContent, MarkerTooltip } from "@/components/ui/map";
 import { Car, Cpu, Building, Circle } from "lucide-react";
-import type { Entity } from "@/interface/entity.interface";
+import type { Entity } from "@/interfaces/entity";
 
 const typeStyles: Record<string, { icon: typeof Car; bg: string; text: string }> = {
   vehicle: { icon: Car, bg: "bg-blue-500", text: "text-white" },

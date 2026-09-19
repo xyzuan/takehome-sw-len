@@ -1,8 +1,8 @@
 import { Car, Cpu, Building, Circle, X, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useEntity } from "@/features/entities/hooks";
+import { useEntity } from "@/api/entity";
 import { useUIStore } from "@/store/ui";
-import { formatLabel } from "@/consts/labels";
+import { formatLabel } from "@/constants/labels";
 
 const typeStyles: Record<string, { icon: typeof Car; bg: string; text: string }> = {
   vehicle: { icon: Car, bg: "bg-blue-500", text: "text-white" },

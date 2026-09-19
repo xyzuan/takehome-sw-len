@@ -1,9 +1,56 @@
+import axios from "axios";
 import { useQuery, useMutation, useQueryClient, useInfiniteQuery, keepPreviousData } from "@tanstack/react-query";
-import { entityKeys } from "@/consts/query-key";
-import { fetchMap, fetchList, fetchOne, createEntity, updateEntity, deleteEntity } from "./api";
-import type { EntityInput } from "@/interface/entity.interface";
 import { toast } from "sonner";
+import client from "@/libs/axios";
+import type { Entity, EntityInput, ApiResponse, PaginationMeta } from "@/interfaces/entity";
 
+// Query keys
+const entityKeys = {
+  map: (bbox: string, filters?: string) => ["entities", "map", bbox, filters] as const,
+  list: (page: number, perPage: number, filters?: string) => ["entities", "list", page, perPage, filters] as const,
+  detail: (id: string) => ["entities", "detail", id] as const,
+};
+
+// API calls
+async function fetchMap(bbox: string, type?: string, status?: string): Promise<Entity[]> {
+  const params: Record<string, string> = { bbox };
+  if (type) params.type = type;
+  if (status) params.status = status;
+  return client.get("/entities/map", { params }) as unknown as Promise<Entity[]>;
+}
+
+interface ListResult {
+  data: Entity[];
+  meta: PaginationMeta | null;
+}
+
+async function fetchList(page: number, perPage: number, type?: string, status?: string, search?: string): Promise<ListResult> {
+  const params: Record<string, string> = { page: String(page), per_page: String(perPage) };
+  if (type) params.type = type;
+  if (status) params.status = status;
+  if (search) params.search = search;
+  const res = await axios.get("/api/entities", { params });
+  const body = res.data as ApiResponse<Entity[]>;
+  return { data: body.data ?? [], meta: body.meta ?? null };
+}
+
+async function fetchOne(id: string): Promise<Entity> {
+  return client.get(`/entities/${id}`) as unknown as Promise<Entity>;
+}
+
+async function createEntity(input: EntityInput): Promise<Entity> {
+  return client.post("/entities", input) as unknown as Promise<Entity>;
+}
+
+async function updateEntity(id: string, input: EntityInput): Promise<Entity> {
+  return client.put(`/entities/${id}`, input) as unknown as Promise<Entity>;
+}
+
+async function deleteEntity(id: string): Promise<void> {
+  await client.delete(`/entities/${id}`);
+}
+
+// React Query hooks
 export function useMapEntities(bbox: string | null, type?: string, status?: string) {
   return useQuery({
     queryKey: entityKeys.map(bbox ?? "", [type, status].filter(Boolean).join(",")),

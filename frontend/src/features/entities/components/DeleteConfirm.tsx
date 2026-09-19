@@ -8,7 +8,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { useDeleteEntity } from "@/features/entities/hooks";
+import { useDeleteEntity } from "@/api/entity";
 import { useUIStore } from "@/store/ui";
 
 interface DeleteConfirmProps {

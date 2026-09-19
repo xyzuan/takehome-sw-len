@@ -1,15 +1,15 @@
 import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "@/libs/query";
 import { Toaster } from "sonner";
-import { EntityMap } from "@/components/map/EntityMap";
-import { BottomNavigation } from "@/components/BottomNavigation";
-import { InAreaCard } from "@/components/InAreaCard";
-import { EntityDetailCard } from "@/components/EntityDetailCard";
-import { EntityEditCard } from "@/components/EntityEditCard";
-import { EntityAddCard } from "@/components/EntityAddCard";
-import { EntityFilterCard } from "@/components/EntityFilterCard";
-import { SearchResults } from "@/components/SearchResults";
-import { DeleteConfirm } from "@/components/DeleteConfirm";
+import { EntityMap } from "@/features/entities/components/EntityMap";
+import { BottomNavigation } from "@/features/entities/components/BottomNavigation";
+import { InAreaCard } from "@/features/entities/components/InAreaCard";
+import { EntityDetailCard } from "@/features/entities/components/EntityDetailCard";
+import { EntityEditCard } from "@/features/entities/components/EntityEditCard";
+import { EntityAddCard } from "@/features/entities/components/EntityAddCard";
+import { EntityFilterCard } from "@/features/entities/components/EntityFilterCard";
+import { SearchResults } from "@/features/entities/components/SearchResults";
+import { DeleteConfirm } from "@/features/entities/components/DeleteConfirm";
 import { useUIStore } from "@/store/ui";
 
 function SharedContainer() {

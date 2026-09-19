@@ -1,8 +1,8 @@
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { entitySchema, type EntityFormValues } from "./schema";
-import { useCreateEntity, useUpdateEntity } from "./hooks";
+import { entitySchema, type EntityFormValues } from "@/schemas/entity";
+import { useCreateEntity, useUpdateEntity } from "@/api/entity";
 import { useUIStore } from "@/store/ui";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,7 +14,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import type { Entity } from "@/interface/entity.interface";
+import type { Entity } from "@/interfaces/entity";
 
 interface EntityFormProps {
   entity?: Entity | null;

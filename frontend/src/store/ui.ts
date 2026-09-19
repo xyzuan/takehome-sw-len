@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import type { Entity } from "@/interface/entity.interface";
+import type { Entity } from "@/interfaces/entity";
 
 type Overlay = "none" | "add" | "edit" | "delete" | "filter" | "search";
 
