@@ -30,7 +30,7 @@ export const DebugOverlay = () => {
 
   return (
     <div className="absolute top-4 right-4 z-50 w-72">
-      <Card className="shadow-lg">
+      <Card className="shadow-lg bg-background/80 backdrop-blur-sm">
         <CardHeader className="pb-2">
           <CardTitle className="text-xs font-mono">Debug Overlay</CardTitle>
         </CardHeader>
