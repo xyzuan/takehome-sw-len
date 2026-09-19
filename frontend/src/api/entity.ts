@@ -2,7 +2,27 @@ import axios from "axios";
 import { useQuery, useMutation, useQueryClient, useInfiniteQuery, keepPreviousData } from "@tanstack/react-query";
 import { toast } from "sonner";
 import client from "@/libs/axios";
-import type { Entity, EntityInput, ApiResponse, PaginationMeta } from "@/interfaces/entity";
+import type { Entity, EntityInput } from "@/interfaces/entity";
+
+// API response types
+export interface PaginationMeta {
+  current_page: number;
+  last_page: number;
+  per_page: number;
+  total: number;
+}
+
+export interface ApiResponse<T> {
+  status_code: number;
+  message: string;
+  data: T | null;
+  meta?: PaginationMeta;
+  errors?: Record<string, string>;
+}
+
+export interface EntityMapResponse extends ApiResponse<Entity[]> {}
+export interface EntityListResponse extends ApiResponse<Entity[]> {}
+export interface EntityResponse extends ApiResponse<Entity> {}
 
 // Query keys
 const entityKeys = {

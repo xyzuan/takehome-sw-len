@@ -24,22 +24,3 @@ export interface EntityInput {
   lng: number;
   attributes?: Record<string, unknown>;
 }
-
-export interface PaginationMeta {
-  current_page: number;
-  last_page: number;
-  per_page: number;
-  total: number;
-}
-
-export interface ApiResponse<T> {
-  status_code: number;
-  message: string;
-  data: T | null;
-  meta?: PaginationMeta;
-  errors?: Record<string, string>;
-}
-
-export interface EntityMapResponse extends ApiResponse<Entity[]> {}
-export interface EntityListResponse extends ApiResponse<Entity[]> {}
-export interface EntityResponse extends ApiResponse<Entity> {}

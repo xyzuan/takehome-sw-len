@@ -1,5 +1,5 @@
 import axios, { type AxiosResponse } from "axios";
-import type { ApiResponse } from "@/interfaces/entity";
+import type { ApiResponse } from "@/api/entity";
 
 export class ApiError extends Error {
   constructor(
