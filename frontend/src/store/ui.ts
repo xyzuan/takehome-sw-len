@@ -24,6 +24,8 @@ interface UIState {
   darkMode: boolean;
   committedPos: { lat: number; lng: number } | null;
   draftEntity: Partial<Entity> | null;
+  debugMode: boolean;
+  renderedCount: number;
 
   setPickMode: (v: boolean) => void;
   setSelectedEntityId: (id: string | null) => void;
@@ -39,6 +41,8 @@ interface UIState {
   toggleDarkMode: () => void;
   setCommittedPos: (v: { lat: number; lng: number } | null) => void;
   setDraftEntity: (v: Partial<Entity> | null) => void;
+  toggleDebugMode: () => void;
+  setRenderedCount: (v: number) => void;
   reset: () => void;
 }
 
@@ -56,6 +60,8 @@ export const useUIStore = create<UIState>((set) => ({
   darkMode: false,
   committedPos: null,
   draftEntity: null,
+  debugMode: false,
+  renderedCount: 0,
 
   setPickMode: (v) => set({ pickMode: v }),
   setSelectedEntityId: (id) => set({ selectedEntityId: id }),
@@ -71,6 +77,8 @@ export const useUIStore = create<UIState>((set) => ({
   toggleDarkMode: () => set((s) => ({ darkMode: !s.darkMode })),
   setCommittedPos: (v) => set({ committedPos: v }),
   setDraftEntity: (v) => set({ draftEntity: v }),
+  toggleDebugMode: () => set((s) => ({ debugMode: !s.debugMode })),
+  setRenderedCount: (v) => set({ renderedCount: v }),
   reset: () =>
     set({
       pickMode: false,
@@ -86,5 +94,7 @@ export const useUIStore = create<UIState>((set) => ({
       darkMode: false,
       committedPos: null,
       draftEntity: null,
+      debugMode: false,
+      renderedCount: 0,
     }),
 }));

@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { ExpandableButton } from "@/components/ui/expandable-button";
 import { useUIStore } from "@/store/ui";
-import { Plus, SlidersHorizontal, Sun, Moon } from "lucide-react";
+import { Plus, SlidersHorizontal, Sun, Moon, Bug } from "lucide-react";
 
 export const BottomNavigation = () => {
   const setPickMode = useUIStore((s) => s.setPickMode);
@@ -15,6 +15,8 @@ export const BottomNavigation = () => {
   const activeOverlay = useUIStore((s) => s.activeOverlay);
   const typeFilter = useUIStore((s) => s.typeFilter);
   const statusFilter = useUIStore((s) => s.statusFilter);
+  const debugMode = useUIStore((s) => s.debugMode);
+  const toggleDebugMode = useUIStore((s) => s.toggleDebugMode);
 
   useEffect(() => {
     const root = document.documentElement;
@@ -53,6 +55,14 @@ export const BottomNavigation = () => {
           setActiveOverlay(activeOverlay === "filter" ? "none" : "filter");
         }}
         active={isFilterActive}
+      />
+
+      <ExpandableButton
+        icon={<Bug className="w-5 h-5" />}
+        label="Debug"
+        onClick={toggleDebugMode}
+        variant="outline"
+        active={debugMode}
       />
 
       <ExpandableButton

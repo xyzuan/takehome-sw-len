@@ -31,6 +31,7 @@ export const EntityMap = ({ children }: { children?: ReactNode }) => {
   const draftLatLng = useUIStore((s) => s.draftLatLng);
   const setDraftLatLng = useUIStore((s) => s.setDraftLatLng);
   const setActiveOverlay = useUIStore((s) => s.setActiveOverlay);
+  const setRenderedCount = useUIStore((s) => s.setRenderedCount);
 
   const handlePick = useCallback(
     (lat: number, lng: number) => {
@@ -67,6 +68,8 @@ export const EntityMap = ({ children }: { children?: ReactNode }) => {
     }
     return result;
   }, [mapData, search, selectedEntityId, draftEntity, draftLatLng]);
+
+  setRenderedCount(filtered.length);
 
   return (
     <Map center={[107.6195, -6.9495]} zoom={14} theme={darkMode ? "dark" : "light"} className="w-full h-full">
