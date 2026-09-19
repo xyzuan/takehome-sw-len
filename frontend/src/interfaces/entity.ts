@@ -1,4 +1,4 @@
-import type { EntityType, EntityStatus } from "@/types/entity.type";
+import type { EntityType, EntityStatus } from "@/types/entity";
 
 export interface Entity {
   id: string;
