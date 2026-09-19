@@ -10,7 +10,7 @@ type MapQuery = IQueryRequest & EntityQueryParams;
 
 export const useMapEntities = (query: MapQuery) =>
   useQuery({
-    queryKey: [QKEY_ENTITIES_MAP, { ...query }],
+    queryKey: [...QKEY_ENTITIES_MAP, { ...query }],
     queryFn: async (): Promise<ApiResponse<Entity[]>> =>
       client.get(`/entities/map${generateUrlParams(query)}`).then((res) => res.data),
     enabled: !!query.bbox,
@@ -19,7 +19,7 @@ export const useMapEntities = (query: MapQuery) =>
 
 export const useSearchEntities = (query: IQueryRequest & EntityQueryParams) =>
   useInfiniteQuery({
-    queryKey: [QKEY_ENTITIES_LIST, { ...query }],
+    queryKey: [...QKEY_ENTITIES_LIST, { ...query }],
     queryFn: async ({ pageParam }): Promise<ApiResponse<Entity[]>> =>
       client
         .get(`/entities${generateUrlParams({ ...query, page: pageParam, per_page: 10 })}`)
@@ -36,7 +36,7 @@ export const useSearchEntities = (query: IQueryRequest & EntityQueryParams) =>
 
 export const useEntity = (id: string | null) =>
   useQuery({
-    queryKey: [QKEY_ENTITY_DETAIL, id ?? ""],
+    queryKey: [...QKEY_ENTITY_DETAIL, id ?? ""],
     queryFn: async (): Promise<ApiResponse<Entity>> =>
       client.get(`/entities/${id}`).then((res) => res.data),
     enabled: !!id,
