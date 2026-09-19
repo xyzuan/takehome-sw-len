@@ -85,7 +85,7 @@ This project was built using Agentic AI (opencode with superpowers). The workflo
 
 | Component | Tool / Model |
 |----------|-------------|
-| IDE | OpenChamber (openchamber.dev) |
+| ADE | OpenChamber (openchamber.dev) |
 | Model | GLM 5.2 (primary) |
 | MCP | context7, shadcn |
 | Skills | superpowers (subagent-driven development) |
