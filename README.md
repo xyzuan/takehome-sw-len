@@ -4,6 +4,8 @@
 
 An application to display and manage geo-located entities (vehicles, IoT devices, facilities) on an interactive map. Built as a take-home test.
 
+[![Live Demo](https://img.shields.io/badge/Live_Demo-takehome--sw--len.xyzuan.com-22c55e?style=for-the-badge&logo=googlechrome&logoColor=white)](https://takehome-sw-len.xyzuan.com)
+
 ## Prerequisites
 
 - Docker (tested with v29.7)
