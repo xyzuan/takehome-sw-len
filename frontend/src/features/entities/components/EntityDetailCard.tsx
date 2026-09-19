@@ -1,6 +1,7 @@
-import { X, MapPin } from "lucide-react";
+import { X, MapPin, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useEntity } from "@/services/entity";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { useEntity, useDeleteEntity } from "@/services/entity";
 import { useUIStore } from "@/store/ui";
 import { formatLabel } from "@/constants/labels";
 import { typeStyles, statusColors } from "@/constants/entity";
@@ -11,6 +12,8 @@ export const EntityDetailCard = () => {
   const entity = entityRes?.data;
   const setActiveOverlay = useUIStore((s) => s.setActiveOverlay);
   const setSelectedEntityId = useUIStore((s) => s.setSelectedEntityId);
+  const reset = useUIStore((s) => s.reset);
+  const deleteMut = useDeleteEntity();
 
   if (!entity) return null;
 
@@ -20,6 +23,11 @@ export const EntityDetailCard = () => {
   const handleClose = () => {
     setSelectedEntityId(null);
     setActiveOverlay("none");
+  };
+
+  const handleDelete = async () => {
+    await deleteMut.mutateAsync(entity.id);
+    reset();
   };
 
   return (
@@ -76,15 +84,51 @@ export const EntityDetailCard = () => {
         >
           Edit
         </Button>
-        <Button
-          size="sm"
-          variant="destructive"
-          className="flex-1"
-          onClick={() => setActiveOverlay("delete")}
-        >
-          Delete
-        </Button>
+        <Popover>
+          <PopoverTrigger
+            render={
+              <Button
+                size="sm"
+                variant="destructive"
+                className="flex-1"
+                disabled={deleteMut.isPending}
+              >
+                {deleteMut.isPending ? "Deleting..." : "Delete"}
+              </Button>
+            }
+          />
+          <PopoverContent className="w-72 gap-0 overflow-hidden p-0" align="center" side="top">
+            <div className="bg-destructive/5 border-destructive/10 border-b p-2">
+              <div className="text-destructive flex items-center gap-2 font-semibold text-sm">
+                <Trash2 className="size-4" />
+                <span>Delete Entity</span>
+              </div>
+            </div>
+            <div className="space-y-3 p-3">
+              <p className="text-muted-foreground text-sm leading-relaxed">
+                This action cannot be undone. The entity will be permanently removed.
+              </p>
+              <div className="grid grid-cols-2 items-center gap-2">
+                <Button
+                  size="sm"
+                  variant="destructive"
+                  onClick={handleDelete}
+                  disabled={deleteMut.isPending}
+                >
+                  {deleteMut.isPending ? "Deleting..." : "Delete"}
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={handleClose}
+                >
+                  Cancel
+                </Button>
+              </div>
+            </div>
+          </PopoverContent>
+        </Popover>
       </div>
     </div>
   );
-}
+};
