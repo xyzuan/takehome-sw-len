@@ -48,7 +48,7 @@ The first start seeds 100 demo entities in a circular distribution around Bandun
 | PUT | /api/entities/:id | full replace |
 | DELETE | /api/entities/:id | delete |
 
-## Library Choices
+## Tech & Stack Choices
 
 ### Backend
 
@@ -71,6 +71,15 @@ The first start seeds 100 demo entities in a circular distribution around Bandun
 | react-hook-form + zod | Form state + schema validation | Mirrors backend validation rules on the client |
 | Zustand | Ephemeral UI state | Minimal state for pick mode, selected entity, active overlay |
 | lucide-react | Icons | Marker styling by entity type |
+
+### DevOps
+
+| Component | Tool | Reason |
+|-----------|------|--------|
+| Gateway | Cloudflare Zero Trust | Secure tunneling and access control for self-hosted services |
+| Host | ThinkCentre M90q | Self-hosted mini PC running the deployment stack |
+| Container | Docker, Docker Compose, Portainer | Containerization, multi-service orchestration, and visual container management |
+| AI Agent | Self-Hosted OpenChamber ADE | Locally hosted agentic development environment |
 
 ## Agentic AI Workflow
 
