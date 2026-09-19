@@ -17,7 +17,7 @@ docker compose up -d --build
 - Backend API: http://localhost:8080/api
 - Database: localhost:5432 (user: geo, password: geo, db: geoapp)
 
-The first start seeds 6 demo entities around Jakarta.
+The first start seeds 100 demo entities in a circular distribution around Bandung (centered on PT Len Industri).
 
 ## API Endpoints
 

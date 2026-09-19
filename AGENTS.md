@@ -2,6 +2,8 @@
 
 This project was built with opencode (Agentic AI).
 
+> **Nested guidance:** stack-specific instructions live in `backend/AGENTS.md` and `frontend/AGENTS.md`. Agents read the nearest file, so the nested files override/supplement this root guidance when working inside those directories.
+
 ## AI Workflow
 
 The development used the superpowers skill set:
@@ -19,6 +21,7 @@ The development used the superpowers skill set:
 - Flat API envelope: { status_code, message, data, meta?, errors? }
 - Laravel-style pagination: { current_page, last_page, per_page, total }
 - Backend-side search with ILIKE for name filtering
+- Bbox viewport filtering via PostGIS `ST_Within(location, ST_MakeEnvelope(..., 4326))` — DB returns only entities in the viewport so the client renders a lightweight marker set
 - Client-side marker fade-in animation via Web Animations API (CSS didn't reach MapLibre portaled DOM)
 - keepPreviousData on map query to prevent marker unmount during viewport changes
 - Custom focus mode: 3D pitch + continuous RAF rotation, locked interactions, saved map view restore
@@ -28,26 +31,29 @@ The development used the superpowers skill set:
 
 ## Architecture
 
-### Backend (Go + Gin + GORM + PostGIS)
-- `cmd/server/main.go` — Gin server entrypoint with CORS, routes, DB connect, migrations, seed
-- `internal/config` — env var loading
-- `internal/db` — GORM connection, PostGIS Point type, embedded SQL migration runner
-- `internal/models` — Entity struct + validator tags + EntityInput + MapCluster
-- `internal/handlers` — Gin handlers with flat envelope response helpers
-- `internal/services` — business logic (CRUD, map bbox query, pagination, search)
-- `internal/validation` — custom lat/lng validators, Gin binding registration
-- `migrations/` — versioned SQL files (0001_init)
-- `seed/` — 100 demo entities in circular distribution around Bandung
+Two services orchestrated by `docker-compose.yml` (db: postgis, backend: Go/Gin, frontend: React/Vite). See the nested files for per-stack structure, code style, do's/don'ts, and commands:
 
-### Frontend (React 19 + Vite + Tailwind + shadcn/ui + mapcn)
-- `src/types/` — domain type aliases (EntityType, EntityStatus)
-- `src/interface/` — TS interfaces (Entity, EntityInput, ApiResponse, PaginationMeta, EntityCluster)
-- `src/consts/` — query keys, label formatting
-- `src/libs/` — axios client (envelope unwrap + ApiError), query client
-- `src/store/` — Zustand UI store (pickMode, selectedEntityId, activeOverlay, draftEntity, darkMode, bbox, zoom, pendingFlyTo, savedMapView, committedPos)
-- `src/features/entities/` — API functions, TanStack Query hooks (map, search infinite, detail, CRUD mutations), zod schema, EntityForm
-- `src/components/map/` — EntityMap (full-screen map + bbox tracking + focus handler + rotation), MarkerLayer (fade-in markers + status dots + tooltips), PickMode
-- `src/components/` — BottomNavigation, InAreaCard, EntityCard, EntityCardSkeleton, EntityDetailCard, EntityEditCard, EntityAddCard, EntityFilterCard, SearchResults, DeleteConfirm
+- [`backend/AGENTS.md`](backend/AGENTS.md) — Go + Gin + GORM + PostGIS service
+- [`frontend/AGENTS.md`](frontend/AGENTS.md) — React 19 + Vite + Tailwind + shadcn/ui + mapcn
+
+## Security
+
+### Allowed without confirmation
+- Read any project file
+- Run `docker compose` build / logs / ps
+- Run `go test` / `go build` inside the backend container
+- Run `npx tsc --noEmit` for type checking
+
+### Requires explicit confirmation
+- `docker compose down -v` — **destroys all database data** (re-seeds on next start)
+- Running or adding new SQL migrations (schema changes)
+- Adding new production dependencies (`go get`, `npm install <pkg>`)
+- Pushing to any branch or creating PRs
+- Modifying `docker-compose.yml` credentials or ports
+
+### Protected resources
+- Never commit `.env` files, API keys, or real credentials
+- Never modify `internal/db/migrations/0001_init.*.sql` — add a new versioned migration instead
 
 ## Commands
 
@@ -55,25 +61,8 @@ The development used the superpowers skill set:
 # Start everything
 docker compose up -d --build
 
-# Rebuild just the backend
-docker compose up -d --build --force-recreate --no-deps backend
-
-# Rebuild just the frontend
-docker compose up -d --build --force-recreate --no-deps frontend
-
-# View logs
-docker compose logs -f backend
-docker compose logs -f frontend
-
-# Run Go tests inside container
-docker compose exec backend go test ./...
-
-# Type-check frontend (do NOT run npx lint or jest — they OOM the machine)
-cd frontend && npx tsc --noEmit -p tsconfig.app.json
-
-# Go commands without local Go installation
-docker run --rm -v $(pwd)/backend:/app -w /app golang:1.23-alpine sh -c "go build ./..."
-
 # Reset database (destroys all data, re-seeds on next startup)
 docker compose down -v && docker compose up -d --build
 ```
+
+For per-stack commands (rebuild single service, logs, type-check, Go tests), see `backend/AGENTS.md` and `frontend/AGENTS.md`.
