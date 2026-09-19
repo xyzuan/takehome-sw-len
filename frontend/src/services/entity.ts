@@ -1,7 +1,8 @@
 import axios from "axios";
-import { useQuery, useMutation, useQueryClient, useInfiniteQuery, keepPreviousData } from "@tanstack/react-query";
+import { useQuery, useMutation, useInfiniteQuery, keepPreviousData } from "@tanstack/react-query";
 import { toast } from "sonner";
 import client from "@/libs/axios";
+import { queryClient } from "@/libs/query";
 import { entityKeys } from "@/constants/query-keys";
 import type { Entity, EntityInput } from "@/interfaces/entity";
 import type { ApiResponse, PaginationMeta } from "@/interfaces/api";
@@ -52,11 +53,10 @@ export const useEntity = (id: string | null) => {
 };
 
 export const useCreateEntity = () => {
-  const qc = useQueryClient();
   return useMutation({
     mutationFn: async (input: EntityInput) => client.post("/entities", input) as unknown as Promise<Entity>,
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["entities"] });
+      queryClient.invalidateQueries({ queryKey: ["entities"] });
       toast.success("Entity created");
     },
     onError: (err: unknown) => {
@@ -67,12 +67,11 @@ export const useCreateEntity = () => {
 };
 
 export const useUpdateEntity = () => {
-  const qc = useQueryClient();
   return useMutation({
     mutationFn: async ({ id, input }: { id: string; input: EntityInput }) =>
       client.put(`/entities/${id}`, input) as unknown as Promise<Entity>,
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["entities"] });
+      queryClient.invalidateQueries({ queryKey: ["entities"] });
       toast.success("Entity updated");
     },
     onError: (err: unknown) => {
@@ -83,13 +82,12 @@ export const useUpdateEntity = () => {
 };
 
 export const useDeleteEntity = () => {
-  const qc = useQueryClient();
   return useMutation({
     mutationFn: async (id: string) => {
       await client.delete(`/entities/${id}`);
     },
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["entities"] });
+      queryClient.invalidateQueries({ queryKey: ["entities"] });
       toast.success("Entity deleted");
     },
     onError: (err: unknown) => {
