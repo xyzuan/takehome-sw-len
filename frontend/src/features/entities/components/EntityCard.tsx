@@ -20,7 +20,7 @@ interface EntityCardProps {
   onClick: (entity: Entity) => void;
 }
 
-export function EntityCard({ entity, onClick }: EntityCardProps) {
+export const EntityCard = ({ entity, onClick }: EntityCardProps) => {
   const style = typeStyles[entity.type] ?? typeStyles.other;
   const Icon = style.icon;
 

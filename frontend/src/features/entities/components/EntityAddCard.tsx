@@ -2,7 +2,7 @@ import { ArrowLeft, MapPin } from "lucide-react";
 import { EntityForm } from "@/features/entities/components/EntityForm";
 import { useUIStore } from "@/store/ui";
 
-export function EntityAddCard() {
+export const EntityAddCard = () => {
   const setActiveOverlay = useUIStore((s) => s.setActiveOverlay);
   const draftLatLng = useUIStore((s) => s.draftLatLng);
   const pickMode = useUIStore((s) => s.pickMode);

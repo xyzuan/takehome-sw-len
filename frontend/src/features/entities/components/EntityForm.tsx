@@ -21,7 +21,7 @@ interface EntityFormProps {
   onDone: () => void;
 }
 
-export function EntityForm({ entity, onDone }: EntityFormProps) {
+export const EntityForm = ({ entity, onDone }: EntityFormProps) => {
   const createMut = useCreateEntity();
   const updateMut = useUpdateEntity();
   const draftLatLng = useUIStore((s) => s.draftLatLng);

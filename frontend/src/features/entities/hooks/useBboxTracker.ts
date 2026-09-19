@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useMap } from "@/components/ui/map";
 import { useUIStore } from "@/store/ui";
 
-export function useBboxTracker() {
+export const useBboxTracker = () => {
   const { map, isLoaded } = useMap();
   const setBbox = useUIStore((s) => s.setBbox);
 

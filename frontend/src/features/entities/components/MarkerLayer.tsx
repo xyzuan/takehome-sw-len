@@ -21,7 +21,7 @@ interface MarkerLayerProps {
   onSelect: (entity: Entity) => void;
 }
 
-export function MarkerLayer({ entities, onSelect }: MarkerLayerProps) {
+export const MarkerLayer = ({ entities, onSelect }: MarkerLayerProps) => {
   const knownIdsRef = useRef<Set<string>>(new Set());
   const currentIds = new Set(entities.map((e) => e.id));
   const newIds = new Set<string>();

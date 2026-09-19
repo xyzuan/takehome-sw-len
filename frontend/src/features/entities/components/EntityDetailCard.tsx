@@ -17,7 +17,7 @@ const statusColors: Record<string, string> = {
   maintenance: "bg-amber-100 text-amber-700",
 };
 
-export function EntityDetailCard() {
+export const EntityDetailCard = () => {
   const selectedEntityId = useUIStore((s) => s.selectedEntityId);
   const { data: entity } = useEntity(selectedEntityId);
   const setActiveOverlay = useUIStore((s) => s.setActiveOverlay);

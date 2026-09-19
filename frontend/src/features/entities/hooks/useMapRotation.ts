@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef } from "react";
 import type { Map as MaplibreMap } from "maplibre-gl";
 
-export function disableInteractions(map: MaplibreMap) {
+export const disableInteractions = (map: MaplibreMap) => {
   map.dragPan.disable();
   map.scrollZoom.disable();
   map.touchZoomRotate.disable();
@@ -10,7 +10,7 @@ export function disableInteractions(map: MaplibreMap) {
   map.keyboard.disable();
 }
 
-export function enableInteractions(map: MaplibreMap) {
+export const enableInteractions = (map: MaplibreMap) => {
   map.dragPan.enable();
   map.scrollZoom.enable();
   map.touchZoomRotate.enable();
@@ -19,7 +19,7 @@ export function enableInteractions(map: MaplibreMap) {
   map.keyboard.enable();
 }
 
-export function useMapRotation(map: MaplibreMap | null) {
+export const useMapRotation = (map: MaplibreMap | null) => {
   const rafRef = useRef<number | null>(null);
   const focusSessionRef = useRef(0);
 

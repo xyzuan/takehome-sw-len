@@ -3,7 +3,7 @@ import { useMap } from "@/components/ui/map";
 import { useUIStore } from "@/store/ui";
 
 // Listens for map clicks when pickMode is active. Calls onPick with lat/lng.
-export function PickMode({ onPick }: { onPick: (lat: number, lng: number) => void }) {
+export const PickMode = ({ onPick }: { onPick: (lat: number, lng: number) => void }) => {
   const { map, isLoaded } = useMap();
   const pickMode = useUIStore((s) => s.pickMode);
 

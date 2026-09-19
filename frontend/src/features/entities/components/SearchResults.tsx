@@ -13,7 +13,7 @@ const typeStyles: Record<string, { icon: typeof Car; bg: string; text: string }>
   other: { icon: Circle, bg: "bg-gray-500", text: "text-white" },
 };
 
-export function SearchResults() {
+export const SearchResults = () => {
   const search = useUIStore((s) => s.search);
   const typeFilter = useUIStore((s) => s.typeFilter);
   const statusFilter = useUIStore((s) => s.statusFilter);

@@ -8,17 +8,17 @@ import { useMapEntities } from "@/services/entity";
 import { useUIStore } from "@/store/ui";
 import type { Entity } from "@/interfaces/entity";
 
-function BboxTracker() {
+const BboxTracker = () => {
   useBboxTracker();
   return null;
 }
 
-function MapFocusHandler() {
+const MapFocusHandler = () => {
   useMapFocusHandler();
   return null;
 }
 
-export function EntityMap({ children }: { children?: ReactNode }) {
+export const EntityMap = ({ children }: { children?: ReactNode }) => {
   const bbox = useUIStore((s) => s.bbox);
   const typeFilter = useUIStore((s) => s.typeFilter);
   const statusFilter = useUIStore((s) => s.statusFilter);

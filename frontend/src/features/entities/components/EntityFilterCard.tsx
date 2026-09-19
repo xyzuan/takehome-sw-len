@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/select";
 import { useUIStore } from "@/store/ui";
 
-export function EntityFilterCard() {
+export const EntityFilterCard = () => {
   const setActiveOverlay = useUIStore((s) => s.setActiveOverlay);
   const typeFilter = useUIStore((s) => s.typeFilter);
   const setTypeFilter = useUIStore((s) => s.setTypeFilter);

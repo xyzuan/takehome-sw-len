@@ -3,7 +3,7 @@ import { EntityForm } from "@/features/entities/components/EntityForm";
 import { useEntity } from "@/services/entity";
 import { useUIStore } from "@/store/ui";
 
-export function EntityEditCard() {
+export const EntityEditCard = () => {
   const selectedEntityId = useUIStore((s) => s.selectedEntityId);
   const { data: entity } = useEntity(selectedEntityId);
   const setActiveOverlay = useUIStore((s) => s.setActiveOverlay);

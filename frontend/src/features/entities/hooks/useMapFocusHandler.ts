@@ -4,14 +4,14 @@ import { useMap } from "@/components/ui/map";
 import { useUIStore } from "@/store/ui";
 import { useMapRotation, disableInteractions, enableInteractions } from "./useMapRotation";
 
-function updateBboxFromMap(map: MaplibreMap) {
+const updateBboxFromMap = (map: MaplibreMap) => {
   const bounds = map.getBounds();
   useUIStore.getState().setBbox(
     `${bounds.getWest()},${bounds.getSouth()},${bounds.getEast()},${bounds.getNorth()}`,
   );
 }
 
-export function useMapFocusHandler() {
+export const useMapFocusHandler = () => {
   const { map, isLoaded } = useMap();
   const selectedEntityId = useUIStore((s) => s.selectedEntityId);
   const pendingFlyTo = useUIStore((s) => s.pendingFlyTo);

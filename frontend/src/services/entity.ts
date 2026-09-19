@@ -32,7 +32,7 @@ const entityKeys = {
 };
 
 // API calls
-async function fetchMap(bbox: string, type?: string, status?: string): Promise<Entity[]> {
+const fetchMap = async (bbox: string, type?: string, status?: string): Promise<Entity[]> => {
   const params: Record<string, string> = { bbox };
   if (type) params.type = type;
   if (status) params.status = status;
@@ -44,7 +44,7 @@ interface ListResult {
   meta: PaginationMeta | null;
 }
 
-async function fetchList(page: number, perPage: number, type?: string, status?: string, search?: string): Promise<ListResult> {
+const fetchList = async (page: number, perPage: number, type?: string, status?: string, search?: string): Promise<ListResult> => {
   const params: Record<string, string> = { page: String(page), per_page: String(perPage) };
   if (type) params.type = type;
   if (status) params.status = status;
@@ -54,24 +54,24 @@ async function fetchList(page: number, perPage: number, type?: string, status?: 
   return { data: body.data ?? [], meta: body.meta ?? null };
 }
 
-async function fetchOne(id: string): Promise<Entity> {
+const fetchOne = async (id: string): Promise<Entity> => {
   return client.get(`/entities/${id}`) as unknown as Promise<Entity>;
 }
 
-async function createEntity(input: EntityInput): Promise<Entity> {
+const createEntity = async (input: EntityInput): Promise<Entity> => {
   return client.post("/entities", input) as unknown as Promise<Entity>;
 }
 
-async function updateEntity(id: string, input: EntityInput): Promise<Entity> {
+const updateEntity = async (id: string, input: EntityInput): Promise<Entity> => {
   return client.put(`/entities/${id}`, input) as unknown as Promise<Entity>;
 }
 
-async function deleteEntity(id: string): Promise<void> {
+const deleteEntity = async (id: string): Promise<void> => {
   await client.delete(`/entities/${id}`);
 }
 
 // React Query hooks
-export function useMapEntities(bbox: string | null, type?: string, status?: string) {
+export const useMapEntities = (bbox: string | null, type?: string, status?: string) => {
   return useQuery({
     queryKey: entityKeys.map(bbox ?? "", [type, status].filter(Boolean).join(",")),
     queryFn: () => fetchMap(bbox!, type, status),
@@ -80,7 +80,7 @@ export function useMapEntities(bbox: string | null, type?: string, status?: stri
   });
 }
 
-export function useSearchEntities(search: string, type?: string, status?: string) {
+export const useSearchEntities = (search: string, type?: string, status?: string) => {
   return useInfiniteQuery({
     queryKey: entityKeys.list(0, 10, [search, type, status].filter(Boolean).join(",")),
     queryFn: ({ pageParam }) => fetchList(pageParam, 10, type, status, search),
@@ -95,7 +95,7 @@ export function useSearchEntities(search: string, type?: string, status?: string
   });
 }
 
-export function useEntity(id: string | null) {
+export const useEntity = (id: string | null) => {
   return useQuery({
     queryKey: entityKeys.detail(id ?? ""),
     queryFn: () => fetchOne(id!),
@@ -103,7 +103,7 @@ export function useEntity(id: string | null) {
   });
 }
 
-export function useCreateEntity() {
+export const useCreateEntity = () => {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: (input: EntityInput) => createEntity(input),
@@ -118,7 +118,7 @@ export function useCreateEntity() {
   });
 }
 
-export function useUpdateEntity() {
+export const useUpdateEntity = () => {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: ({ id, input }: { id: string; input: EntityInput }) => updateEntity(id, input),
@@ -133,7 +133,7 @@ export function useUpdateEntity() {
   });
 }
 
-export function useDeleteEntity() {
+export const useDeleteEntity = () => {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: (id: string) => deleteEntity(id),

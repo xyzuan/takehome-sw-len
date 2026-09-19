@@ -17,7 +17,7 @@ interface DeleteConfirmProps {
   onClose: () => void;
 }
 
-export function DeleteConfirm({ open, entityId, onClose }: DeleteConfirmProps) {
+export const DeleteConfirm = ({ open, entityId, onClose }: DeleteConfirmProps) => {
   const deleteMut = useDeleteEntity();
   const reset = useUIStore((s) => s.reset);
 

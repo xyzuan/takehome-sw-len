@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { useUIStore } from "@/store/ui";
 import { Plus, SlidersHorizontal, Sun, Moon } from "lucide-react";
 
-function ExpandableButton({
+const ExpandableButton = ({
   icon,
   label,
   onClick,
@@ -16,7 +16,7 @@ function ExpandableButton({
   onClick: () => void;
   variant?: "ghost" | "default" | "secondary" | "destructive" | "outline";
   active?: boolean;
-}) {
+}) => {
   const [hovered, setHovered] = useState(false);
 
   return (
@@ -51,7 +51,7 @@ function ExpandableButton({
   );
 }
 
-export function BottomNavigation() {
+export const BottomNavigation = () => {
   const setPickMode = useUIStore((s) => s.setPickMode);
   const pickMode = useUIStore((s) => s.pickMode);
   const search = useUIStore((s) => s.search);

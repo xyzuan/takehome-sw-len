@@ -9,7 +9,7 @@ import { EntityFilterCard } from "./components/EntityFilterCard";
 import { SearchResults } from "./components/SearchResults";
 import { useUIStore } from "@/store/ui";
 
-function SharedContainer() {
+const SharedContainer = () => {
   const activeOverlay = useUIStore((s) => s.activeOverlay);
   const selectedEntityId = useUIStore((s) => s.selectedEntityId);
 
@@ -21,7 +21,7 @@ function SharedContainer() {
   return <InAreaCard />;
 }
 
-export function Entities({ children }: { children?: ReactNode }) {
+export const Entities = ({ children }: { children?: ReactNode }) => {
   return (
     <>
       <EntityMap>{children}</EntityMap>

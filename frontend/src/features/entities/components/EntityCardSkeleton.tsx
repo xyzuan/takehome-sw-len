@@ -1,4 +1,4 @@
-export function EntityCardSkeleton() {
+export const EntityCardSkeleton = () => {
   return (
     <div className="flex-shrink-0 w-56 bg-background/95 backdrop-blur border rounded-xl shadow-md p-3 animate-pulse">
       <div className="flex items-start gap-3">

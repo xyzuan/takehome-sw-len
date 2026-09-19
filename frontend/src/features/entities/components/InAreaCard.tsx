@@ -7,7 +7,7 @@ import type { Entity } from "@/interfaces/entity";
 
 const MIN_SKELETON_MS = 400;
 
-export function InAreaCard() {
+export const InAreaCard = () => {
   const bbox = useUIStore((s) => s.bbox);
   const typeFilter = useUIStore((s) => s.typeFilter);
   const statusFilter = useUIStore((s) => s.statusFilter);
