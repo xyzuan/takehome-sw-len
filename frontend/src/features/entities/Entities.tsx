@@ -15,7 +15,7 @@ export const Entities = ({ children }: { children?: ReactNode }) => {
       {debugMode && <DebugOverlay />}
 
       {/* Floating bottom-center: shared container + controls */}
-      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10 flex flex-col items-stretch gap-2 w-[calc(100vw-2rem)] max-w-2xl">
+      <div className="absolute left-1/2 -translate-x-1/2 z-10 flex flex-col items-stretch gap-2 w-[calc(100vw-2rem)] max-w-2xl" style={{ bottom: "calc(1rem + env(safe-area-inset-bottom, 0px))" }}>
         <EntityContainer />
         <BottomNavigation />
       </div>

@@ -29,9 +29,15 @@
 }
 
 * { border-color: var(--color-border); }
-body {
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
   background-color: var(--color-background);
   color: var(--color-foreground);
+}
+#root {
+  height: 100svh;
 }
 
 @theme inline {

@@ -6,7 +6,7 @@ import { Entities } from "@/features/entities/Entities";
 export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <div className="w-screen h-screen relative overflow-hidden">
+      <div className="w-screen h-[100svh] relative overflow-hidden">
         <Entities />
       </div>
       <Toaster />
